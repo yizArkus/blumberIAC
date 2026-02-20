@@ -25,6 +25,7 @@ if (fs.existsSync(stackFile)) {
 const FRONTEND = path.resolve(ROOT, frontendDir);
 const BACKEND = path.resolve(ROOT, backendDir);
 const INFRA_PERMS = path.resolve(ROOT, infraPermsDir);
+const RUNTIME_PERMS = path.join(ROOT, "src", "packages", "runtime-permissions");
 const DB_PASSWORD = process.env.DB_PASSWORD || "changeme";
 
 function ask(question) {
@@ -81,14 +82,18 @@ async function main() {
   const finalAppRoot = (appRootAnswer === "." || appRootAnswer.toLowerCase() === "root") ? "" : (appRootAnswer || savedFrontendAppRoot);
 
   console.log("\n--- Permisos de deploy (infra-permissions) ---");
-  console.log("¿Quién puede asumir el rol 'infra-deployer' para desplegar? (tu usuario IAM o un rol de CI)");
+  if (cloudProvider !== "aws") {
+    console.log("(Solo AWS usa deployPrincipalArn; para Azure/GCP infra-permissions no está implementado aún.)");
+  } else {
+    console.log("¿Quién puede asumir el rol 'infra-deployer' para desplegar? (tu usuario IAM o un rol de CI)");
+  }
   const principalPrompt = savedDeployPrincipalArn
     ? `ARN del principal (ej. arn:aws:iam::123456789012:user/mi-usuario) [${savedDeployPrincipalArn}]: `
     : "ARN del principal (ej. arn:aws:iam::123456789012:user/mi-usuario) []: ";
   const deployPrincipalAnswer = await ask(principalPrompt);
   const finalDeployPrincipalArn = deployPrincipalAnswer || savedDeployPrincipalArn;
-  if (!finalDeployPrincipalArn) {
-    console.error("deployPrincipalArn es obligatorio para infra-permissions. Ejemplo: arn:aws:iam::123456789012:user/tu-usuario");
+  if (cloudProvider === "aws" && !finalDeployPrincipalArn) {
+    console.error("deployPrincipalArn es obligatorio para AWS. Ejemplo: arn:aws:iam::123456789012:user/tu-usuario");
     process.exit(2);
   }
 
@@ -112,7 +117,8 @@ async function main() {
     `Se usará: provider=${cloudProvider}, region=${cloudRegion}, repo=${finalRepoUrl || "(ninguno)"}, branch=${finalBranch}, appRoot=${finalAppRoot || "(raíz)"}, deployPrincipal=${finalDeployPrincipalArn}\n`
   );
 
-  // Generar amplify.yml en la raíz del repo (según appRoot configurado)
+  // Generar amplify.yml solo para AWS (Amplify); Azure Static Web Apps usa su propia config.
+  if (cloudProvider === "aws") {
   const repoRoot = process.env.REPO_ROOT ? path.resolve(process.env.REPO_ROOT) : path.join(ROOT, "..");
   const amplifyYmlPath = path.join(repoRoot, "amplify.yml");
   const amplifyYmlContent = finalAppRoot
@@ -160,6 +166,7 @@ frontend:
   } catch (e) {
     console.warn(`No se pudo escribir amplify.yml en ${amplifyYmlPath}:`, e.message);
   }
+  }
 
   // Frontend
   run(`pulumi stack select ${stack}`, FRONTEND);
@@ -189,7 +196,15 @@ frontend:
   run(`pulumi stack select ${stack}`, INFRA_PERMS);
   run(`pulumi config set cloudProvider ${cloudProvider}`, INFRA_PERMS);
   run(`pulumi config set cloudRegion ${cloudRegion}`, INFRA_PERMS);
-  run(`pulumi config set deployPrincipalArn "${finalDeployPrincipalArn.replace(/"/g, '\\"')}"`, INFRA_PERMS);
+  if (cloudProvider === "aws" && finalDeployPrincipalArn) {
+    run(`pulumi config set deployPrincipalArn "${finalDeployPrincipalArn.replace(/"/g, '\\"')}"`, INFRA_PERMS);
+  }
+
+  if (fs.existsSync(RUNTIME_PERMS)) {
+    run(`pulumi stack select ${stack}`, RUNTIME_PERMS);
+    run(`pulumi config set cloudProvider ${cloudProvider}`, RUNTIME_PERMS);
+    run(`pulumi config set cloudRegion ${cloudRegion}`, RUNTIME_PERMS);
+  }
 
   console.log(`Setup listo. Stack: ${stack}, provider: ${cloudProvider}, region: ${cloudRegion}. Siguiente: make deploy-permissions STACK=${stack}`);
 }
