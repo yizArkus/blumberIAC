@@ -1,5 +1,6 @@
-# Stack dev. Config for infra-permissions (no cloud provider config needed for IAM).
-
+# Stack dev. Rol que puede asumir el usuario/CI para desplegar (Amplify, etc.).
+# deployPrincipalArn: usuario o rol que podrá hacer sts:AssumeRole de infra-deployer-role.
 config:
   infra-permissions:cloudProvider: aws
   infra-permissions:cloudRegion: us-east-1
+  infra-permissions:deployPrincipalArn: arn:aws:iam::201462387644:user/nr-yd-user-deploy

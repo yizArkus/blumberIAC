@@ -28,6 +28,25 @@ By default the stack only creates **Amplify** (hosting). Los recursos de Amplify
 
 That policy includes `amplify:*`, `route53:*`, `wafv2:*` (and the rest needed for backend-infra).
 
+## Option A.2: Usar el rol de deploy (assume role)
+
+El stack **infra-permissions** crea un **rol** `cloud-platform-infra-deployer-<stack>` al que se le adjunta la policy anterior. Un usuario o CI puede **asumir** ese rol para obtener permisos de deploy sin tener la policy fija en el usuario.
+
+1. Configura quién puede asumir el rol (en `Pulumi.dev.yaml` o con `pulumi config set`):
+   ```yaml
+   infra-permissions:deployPrincipalArn: arn:aws:iam::201462387644:user/nr-yd-user-deploy
+   ```
+2. Despliega infra-permissions y obtén el ARN del rol:
+   ```bash
+   pulumi stack output infraDeployerRoleArn
+   ```
+3. Para desplegar (por ejemplo frontend), asume el rol y luego ejecuta Pulumi:
+   ```bash
+   aws sts assume-role --role-arn <infraDeployerRoleArn> --role-session-name deploy
+   # Usa las credenciales temporales (AccessKeyId, SecretAccessKey, SessionToken) en env o aws configure
+   make frontend-deploy
+   ```
+
 ## Deploy only Amplify (no DNS/WAF)
 
 If the deploy user only has **Amplify** permissions, leave `enableDns` and `enableWaf` unset or set to `false` (default). Then `make frontend-deploy` will only create the Amplify app. To add DNS and WAF later, set `enableDns: true` and/or `enableWaf: true` and ensure the user has the corresponding permissions.
@@ -38,7 +57,7 @@ If you cannot deploy infra-permissions, an admin must attach a policy to `nr-yd-
 
 | Service  | Actions (minimal) |
 |----------|-------------------|
-| Amplify  | `amplify:*` o bien `amplify:CreateApp`, **`amplify:TagResource`**, `amplify:CreateBranch`, `amplify:GetApp`, `amplify:GetBranch`, etc. |
+| Amplify  | `amplify:*` o bien `amplify:CreateApp`, **`amplify:TagResource`**, `amplify:CreateBranch`, `amplify:DeleteBranch`, `amplify:DeleteApp`, `amplify:GetApp`, `amplify:GetBranch`, `amplify:ListApps`, `amplify:ListBranches`, `amplify:UpdateApp`, `amplify:UpdateBranch` |
 | Route53  | `route53:*` (o las acciones necesarias para hosted zone y records) |
 | WAFv2    | `wafv2:*` (o las acciones necesarias para Web ACL) |
 
@@ -54,9 +73,12 @@ If you cannot deploy infra-permissions, an admin must attach a policy to `nr-yd-
         "amplify:CreateApp",
         "amplify:TagResource",
         "amplify:CreateBranch",
+        "amplify:DeleteBranch",
+        "amplify:DeleteApp",
         "amplify:GetApp",
         "amplify:GetBranch",
         "amplify:ListApps",
+        "amplify:ListBranches",
         "amplify:UpdateApp",
         "amplify:UpdateBranch"
       ],

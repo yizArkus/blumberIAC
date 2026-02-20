@@ -1,5 +1,10 @@
 config:
-  cloudProvider: aws
-  cloudRegion: us-east-1
-  domain: example.com
-  budgetLimit: "150"
+  frontend-infra:budgetLimit: "150"
+  frontend-infra:cloudProvider: aws
+  frontend-infra:cloudRegion: us-west-2
+  frontend-infra:domain: example.com
+  frontend-infra:frontendRepoUrl: https://github.com/yizArkus/blumberIAC
+  frontend-infra:frontendBranch: main
+  frontend-infra:githubToken:
+    secure: AAABAAp8nC8PhvPjroYQAaw1A10KsekpvtEtAO+it7VfEtd3yatrLRIMqwtDPdp76IX+9hNJd4cZABmSgLcBEiQg2+qyHO21
+  frontend-infra:frontendAppRoot: front-end

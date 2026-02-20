@@ -1,0 +1,22 @@
+# Build spec para Amplify (monorepo: frontend en front-end/).
+# Este archivo en la raíz del repo tiene prioridad sobre la config en consola.
+# Si NO es monorepo (frontend en la raíz): usa amplify-single-app.yml y renómbralo a amplify.yml.
+# Ver: https://docs.aws.amazon.com/amplify/latest/userguide/monorepo-configuration.html
+version: 1
+applications:
+  - appRoot: front-end
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm ci
+        build:
+          commands:
+            - npm run build
+      artifacts:
+        baseDirectory: dist
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*

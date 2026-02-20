@@ -20,6 +20,10 @@ export interface FrontendHostingComponentArgs {
   branch?: string;
   /** Framework para hints de build (React, Vue, Angular). */
   framework?: string;
+  /** Token de acceso (GitHub PAT, etc.); requerido si repoUrl está definido (Amplify lo exige). */
+  accessToken?: string | Output<string>;
+  /** Ruta al frontend dentro del repo (monorepo). Ej: "front-end" para que npm ci/build se ejecuten ahí. */
+  appRoot?: string;
 }
 
 export interface FrontendHostingComponentOutputs {

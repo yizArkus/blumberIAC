@@ -2,6 +2,7 @@
  * Definición declarativa de recursos del frontend.
  * Hosting: Amplify (AWS) / Static Web Apps (Azure) / Firebase Hosting (GCP).
  */
+import * as pulumi from "@pulumi/pulumi";
 import type { ResourceDescriptor } from "@cloud-platform/shared";
 
 export interface FrontendResourcesOptions {
@@ -9,6 +10,10 @@ export interface FrontendResourcesOptions {
   repoUrl?: string;
   branch?: string;
   framework?: string;
+  /** Token GitHub (u otro) para conectar el repo; requerido si repoUrl está definido (Amplify). */
+  accessToken?: pulumi.Output<string>;
+  /** Ruta al frontend en el repo (monorepo). Ej: "front-end" para que npm ci/build corran ahí y haya package-lock.json. */
+  appRoot?: string;
   /** Enable Route53 hosted zone (requires route53:*). Default false so deploy works with only Amplify permissions. */
   enableDns?: boolean;
   /** Enable WAF Web ACL (requires wafv2:*). Default false so deploy works with only Amplify permissions. */
@@ -19,7 +24,7 @@ export function getFrontendResources(
   stackName: string,
   options: FrontendResourcesOptions
 ): ResourceDescriptor[] {
-  const { domain, repoUrl, branch, framework, enableDns, enableWaf } = options;
+  const { domain, repoUrl, branch, framework, accessToken, appRoot, enableDns, enableWaf } = options;
   const resources: ResourceDescriptor[] = [
     {
       type: "frontendHosting",
@@ -28,6 +33,8 @@ export function getFrontendResources(
       repoUrl,
       branch,
       framework,
+      accessToken,
+      appRoot,
     },
   ];
   if (enableDns) {

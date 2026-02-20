@@ -21,8 +21,23 @@ const stackName = pulumi.getStack();
 const repoUrl = config.get("frontendRepoUrl");
 const branch = config.get("frontendBranch");
 const framework = config.get("frontendFramework");
+const githubToken = config.getSecret("githubToken");
+const appRootRaw = config.get("frontendAppRoot");
+const appRoot = appRootRaw === "" ? undefined : (appRootRaw ?? "front-end");
 const enableDns = config.getBoolean("enableDns") ?? false;
 const enableWaf = config.getBoolean("enableWaf") ?? false;
+
+if (repoUrl && !githubToken) {
+  pulumi.log.error(
+    `Stack "${stackName}": frontendRepoUrl está definido pero falta githubToken. ` +
+      "El token es por stack. Ejecuta: cd src/packages/frontend-infra && pulumi stack select " +
+      stackName +
+      " && echo TU_TOKEN | pulumi config set --secret githubToken -"
+  );
+  throw new Error(
+    `Falta githubToken para el stack "${stackName}". Configúralo con: pulumi config set --secret githubToken <token> (en frontend-infra)`
+  );
+}
 
 const tags = {
   Project: "cloud-platform",
@@ -35,6 +50,8 @@ const resources = getFrontendResources(stackName, {
   repoUrl,
   branch,
   framework,
+  accessToken: githubToken,
+  appRoot,
   enableDns,
   enableWaf,
 });

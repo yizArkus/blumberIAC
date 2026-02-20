@@ -1,0 +1,20 @@
+# Build spec para Amplify cuando NO es monorepo (frontend en la raíz del repo).
+# package.json y package-lock.json están en la raíz.
+# Para usarlo: renómbralo a amplify.yml (o reemplaza el contenido de amplify.yml).
+# Ver: https://docs.aws.amazon.com/amplify/latest/userguide/build-settings.html
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*

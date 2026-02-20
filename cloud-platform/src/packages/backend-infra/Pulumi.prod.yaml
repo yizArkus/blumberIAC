@@ -1,12 +1,4 @@
 config:
-  cloudProvider: aws
-  cloudRegion: us-east-1
-  instanceSize: t3.micro
-  dbSize: db.t4g.micro
-  minCapacity: "1"
-  maxCapacity: "1"
-  budgetLimit: "150"
-  containerImage: nginx:alpine
   database:engine: postgres
   database:engineVersion: "15"
   database:username: admin
@@ -15,3 +7,13 @@ config:
   database:dbName: myapp
   database:publiclyAccessible: "false"
   database:skipFinalSnapshot: "false"
+  backend-infra:budgetLimit: "150"
+  backend-infra:cloudProvider: aws
+  backend-infra:cloudRegion: us-west-2
+  backend-infra:containerImage: nginx:alpine
+  backend-infra:dbSize: db.t4g.micro
+  backend-infra:instanceSize: t3.micro
+  backend-infra:maxCapacity: "1"
+  backend-infra:minCapacity: "1"
+  database:password:
+    secure: AAABADO8b8Hzdo3tMhWCNd8rcUuuMXLCLqw3aoKbqwWSzX3nq10r+w==

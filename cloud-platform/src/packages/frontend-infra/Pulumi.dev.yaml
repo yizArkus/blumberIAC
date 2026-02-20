@@ -1,6 +1,8 @@
-# Stack dev. Keys without colons to avoid Pulumi Cloud parsing issues.
+# Stack dev. Sin frontendRepoUrl = app sin repo; conéctala a GitHub después en la consola.
 config:
   frontend-infra:budgetLimit: "150"
   frontend-infra:cloudProvider: aws
   frontend-infra:cloudRegion: us-east-1
   frontend-infra:domain: example.com
+  frontend-infra:frontendRepoUrl: https://github.com/yizArkus/blumberIAC
+  frontend-infra:frontendBranch: main

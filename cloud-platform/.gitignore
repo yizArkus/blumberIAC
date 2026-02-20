@@ -10,3 +10,5 @@ Pulumi.*.yaml
 !Pulumi.staging.yaml
 !Pulumi.prod.yaml
 .pulumi/
+.pulumi-selected-stack
+.pulumi-setup.json

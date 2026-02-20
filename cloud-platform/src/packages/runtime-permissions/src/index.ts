@@ -20,7 +20,7 @@ const appRuntimePolicy = new aws.iam.Policy(
           Resource: "arn:aws:secretsmanager:*:*:secret:backend-*",
         },
         {
-          Sid: "DatabaseAccess",
+          Sid: "DatabaseAccess", 
           Effect: "Allow",
           Action: ["rds-db:connect"],
           Resource: "arn:aws:rds-db:*:*:dbuser:*/backend-*",

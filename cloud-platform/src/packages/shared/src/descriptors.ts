@@ -94,6 +94,10 @@ export interface FrontendHostingDescriptor extends BaseDescriptor {
   repoUrl?: string;
   branch?: string;
   framework?: string;
+  /** Token de acceso (GitHub, etc.) para conectar el repo; requerido si repoUrl está definido. */
+  accessToken?: string | import("@pulumi/pulumi").Input<string>;
+  /** Ruta al frontend en el repo (monorepo). Ej: "front-end". */
+  appRoot?: string;
 }
 
 export type ResourceDescriptor =
