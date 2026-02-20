@@ -9,7 +9,10 @@ import type {
  * Restricciones de costo: sin logging, sin Bot Control; solo CommonRuleSet, IpReputation y rate limit.
  * Mantiene por debajo de ~$16/mes.
  */
-const RATE_LIMIT_PER_FIVE_MIN = 1000;
+/** Límite de requests por IP; se evalúa en RATE_LIMIT_WINDOW_SEC. */
+const RATE_LIMIT_MAX_REQUESTS = 1000;
+/** Ventana de evaluación del rate limit (segundos). AWS permite 60, 120, 300, 600. */
+const RATE_LIMIT_WINDOW_SEC = 60;
 
 function visibilityConfig(metricName: string) {
   return {
@@ -48,6 +51,10 @@ export function createAwsFirewall(args: FirewallComponentArgs): FirewallComponen
           managedRuleGroupStatement: {
             vendorName: "AWS",
             name: "AWSManagedRulesAmazonIpReputationList",
+            ruleActionOverrides: [
+              { name: "AWSManagedRPDoSList", actionToUse: { block: {} } },
+              { name: "AWSManagedIPDDoSList", actionToUse: { block: {} } },
+            ],
           },
         },
         visibilityConfig: visibilityConfig(`${args.name}-IpReputation`),
@@ -58,9 +65,9 @@ export function createAwsFirewall(args: FirewallComponentArgs): FirewallComponen
         action: { block: {} },
         statement: {
           rateBasedStatement: {
-            limit: RATE_LIMIT_PER_FIVE_MIN,
+            limit: RATE_LIMIT_MAX_REQUESTS,
             aggregateKeyType: "IP",
-            evaluationWindowSec: 300,
+            evaluationWindowSec: RATE_LIMIT_WINDOW_SEC,
           },
         },
         visibilityConfig: visibilityConfig(`${args.name}-RateLimit`),

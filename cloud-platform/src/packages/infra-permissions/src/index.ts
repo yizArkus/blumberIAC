@@ -59,10 +59,33 @@ if (provider === "aws") {
             ],
             Resource: "arn:aws:amplify:*:*:apps/*",
           },
+          {
+            Sid: "WAFv2",
+            Effect: "Allow",
+            Action: [
+              "wafv2:CreateWebACL",
+              "wafv2:GetWebACL",
+              "wafv2:UpdateWebACL",
+              "wafv2:DeleteWebACL",
+              "wafv2:ListWebACLs",
+              "wafv2:ListRuleGroups",
+              "wafv2:GetRuleGroup",
+              "wafv2:ListAvailableManagedRuleGroups",
+              "wafv2:GetManagedRuleSet",
+              "wafv2:ListTagsForResource",
+              "wafv2:TagResource",
+              "wafv2:UntagResource",
+            ],
+            Resource: [
+              "arn:aws:wafv2:*:*:regional/webacl/*",
+              "arn:aws:wafv2:*:*:global/webacl/*",
+              "arn:aws:wafv2:*:*:regional/managedruleset/*/*",
+              "arn:aws:wafv2:*:*:global/managedruleset/*/*",
+            ],
+          },
         ],
       }),
-    },
-    { protect: true }
+    }
   );
 
   const assumeRolePolicy =
