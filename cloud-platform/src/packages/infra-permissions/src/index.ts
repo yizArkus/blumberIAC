@@ -1,7 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
+import { nameTag } from "@cloud-platform/shared";
 
 const config = new pulumi.Config();
-const stackName = pulumi.getStack();
 const region = config.require("cloudRegion");
 const provider = config.require("cloudProvider") as "aws" | "azure" | "gcp";
 
@@ -19,7 +19,7 @@ if (provider === "aws") {
   const infraDeployerPolicy = new aws.iam.Policy(
     "infra-deployer-policy",
     {
-      name: `cloud-platform-infra-deployer-${stackName}`,
+      name: nameTag("infra-deployer-policy"),
       description: "Allows deploying backend-infra and frontend-infra (Pulumi). EC2, ECS, RDS, Amplify, Route53, WAF, Secrets, etc.",
       policy: JSON.stringify({
         Version: "2012-10-17",
@@ -79,7 +79,7 @@ if (provider === "aws") {
         );
 
   const infraDeployerRole = new aws.iam.Role("infra-deployer-role", {
-    name: `cloud-platform-infra-deployer-${stackName}`,
+    name: nameTag("infra-deployer-role"),
     description: "Rol para desplegar infra (frontend Amplify, backend, etc.) desde Pulumi o CI.",
     assumeRolePolicy,
   });

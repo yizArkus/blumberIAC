@@ -52,15 +52,14 @@ export function createAwsFrontendHosting(
 ): FrontendHostingComponentOutputs {
   const tags = { ...args.tags, Name: args.name };
   const branchName = args.branch ?? "main";
-  const stack = pulumi.getStack();
   const buildSpec = getBuildSpec(args.appRoot);
   const envVars: Record<string, string> = {};
   if (args.appRoot) {
     envVars.AMPLIFY_MONOREPO_APP_ROOT = args.appRoot;
   }
 
-  const app = new aws.amplify.App(`${args.name}-app`, {
-    name: `${args.name}-${stack}`,
+  const app = new aws.amplify.App("app", {
+    name: args.name,
     ...(args.repoUrl ? { repository: args.repoUrl } : {}),
     ...(args.repoUrl && args.accessToken ? { accessToken: args.accessToken } : {}),
     buildSpec,
@@ -71,7 +70,7 @@ export function createAwsFrontendHosting(
     tags: tags as Record<string, string>,
   });
 
-  const branch = new aws.amplify.Branch(`${args.name}-branch`, {
+  const branch = new aws.amplify.Branch("branch", {
     appId: app.id,
     branchName,
     framework: args.framework ?? "React",

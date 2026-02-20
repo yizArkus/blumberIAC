@@ -45,6 +45,8 @@ function run(cmd, cwd) {
 async function main() {
   let cloudProvider = "aws";
   let cloudRegion = "us-east-1";
+  let savedOrg = "";
+  let savedApp = "";
   let savedRepoUrl = frontendRepoUrl || "";
   let savedBranch = frontendBranch || "main";
   let savedDeployPrincipalArn = "";
@@ -54,12 +56,20 @@ async function main() {
       const saved = JSON.parse(fs.readFileSync(setupFile, "utf8"));
       if (saved.cloudProvider) cloudProvider = saved.cloudProvider;
       if (saved.cloudRegion) cloudRegion = saved.cloudRegion;
+      if (saved.org) savedOrg = saved.org;
+      if (saved.app) savedApp = saved.app;
       if (saved.frontendRepoUrl != null) savedRepoUrl = saved.frontendRepoUrl;
       if (saved.frontendBranch) savedBranch = saved.frontendBranch;
       if (saved.frontendAppRoot != null) savedFrontendAppRoot = saved.frontendAppRoot;
       if (saved.deployPrincipalArn) savedDeployPrincipalArn = saved.deployPrincipalArn;
     } catch (_) {}
   }
+
+  console.log("\n--- Nomenclatura (org-app-stack-logicalName-hash) ---");
+  const orgAnswer = await ask(`Org (ej. mi-org) [${savedOrg || "mi-org"}]: `);
+  const appAnswer = await ask(`App (ej. mi-app) [${savedApp || "mi-app"}]: `);
+  const finalOrg = orgAnswer || savedOrg || "mi-org";
+  const finalApp = appAnswer || savedApp || "mi-app";
 
   console.log("\n--- Proveedor y región (se aplican a frontend, backend e infra-permissions) ---");
   const providerAnswer = await ask(`Cloud provider (ej. aws) [${cloudProvider}]: `);
@@ -101,6 +111,8 @@ async function main() {
     setupFile,
     JSON.stringify(
       {
+        org: finalOrg,
+        app: finalApp,
         cloudProvider,
         cloudRegion,
         frontendRepoUrl: finalRepoUrl,
@@ -114,7 +126,7 @@ async function main() {
     "utf8"
   );
   console.log(
-    `Se usará: provider=${cloudProvider}, region=${cloudRegion}, repo=${finalRepoUrl || "(ninguno)"}, branch=${finalBranch}, appRoot=${finalAppRoot || "(raíz)"}, deployPrincipal=${finalDeployPrincipalArn}\n`
+    `Se usará: org=${finalOrg}, app=${finalApp}, provider=${cloudProvider}, region=${cloudRegion}, repo=${finalRepoUrl || "(ninguno)"}, branch=${finalBranch}, appRoot=${finalAppRoot || "(raíz)"}, deployPrincipal=${finalDeployPrincipalArn}\n`
   );
 
   // Generar amplify.yml solo para AWS (Amplify); Azure Static Web Apps usa su propia config.
@@ -170,6 +182,8 @@ frontend:
 
   // Frontend
   run(`pulumi stack select ${stack}`, FRONTEND);
+  run(`pulumi config set org ${finalOrg}`, FRONTEND);
+  run(`pulumi config set app ${finalApp}`, FRONTEND);
   run(`pulumi config set cloudProvider ${cloudProvider}`, FRONTEND);
   run(`pulumi config set cloudRegion ${cloudRegion}`, FRONTEND);
   run("pulumi config set domain example.com", FRONTEND);
@@ -188,12 +202,16 @@ frontend:
 
   // Backend
   run(`pulumi stack select ${stack}`, BACKEND);
+  run(`pulumi config set org ${finalOrg}`, BACKEND);
+  run(`pulumi config set app ${finalApp}`, BACKEND);
   run(`pulumi config set cloudProvider ${cloudProvider}`, BACKEND);
   run(`pulumi config set cloudRegion ${cloudRegion}`, BACKEND);
   run(`pulumi config set --secret database:password "${DB_PASSWORD}"`, BACKEND);
 
   // Infra-permissions
   run(`pulumi stack select ${stack}`, INFRA_PERMS);
+  run(`pulumi config set org ${finalOrg}`, INFRA_PERMS);
+  run(`pulumi config set app ${finalApp}`, INFRA_PERMS);
   run(`pulumi config set cloudProvider ${cloudProvider}`, INFRA_PERMS);
   run(`pulumi config set cloudRegion ${cloudRegion}`, INFRA_PERMS);
   if (cloudProvider === "aws" && finalDeployPrincipalArn) {
@@ -201,7 +219,14 @@ frontend:
   }
 
   if (fs.existsSync(RUNTIME_PERMS)) {
-    run(`pulumi stack select ${stack}`, RUNTIME_PERMS);
+    try {
+      run(`pulumi stack select ${stack}`, RUNTIME_PERMS);
+    } catch (_) {
+      run(`pulumi stack init ${stack}`, RUNTIME_PERMS);
+      run(`pulumi stack select ${stack}`, RUNTIME_PERMS);
+    }
+    run(`pulumi config set org ${finalOrg}`, RUNTIME_PERMS);
+    run(`pulumi config set app ${finalApp}`, RUNTIME_PERMS);
     run(`pulumi config set cloudProvider ${cloudProvider}`, RUNTIME_PERMS);
     run(`pulumi config set cloudRegion ${cloudRegion}`, RUNTIME_PERMS);
   }

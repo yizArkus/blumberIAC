@@ -2,3 +2,5 @@ config:
   infra-permissions:cloudProvider: aws
   infra-permissions:cloudRegion: us-west-2
   infra-permissions:deployPrincipalArn: nr-yd-user-deploy
+  infra-permissions:org: an
+  infra-permissions:app: blumberg

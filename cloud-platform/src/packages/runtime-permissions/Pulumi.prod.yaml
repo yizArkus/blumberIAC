@@ -1,3 +1,5 @@
 config:
-  cloudProvider: aws
-  cloudRegion: us-east-1
+  runtime-permissions:cloudProvider: aws
+  runtime-permissions:cloudRegion: us-west-2
+  runtime-permissions:org: an
+  runtime-permissions:app: blumberg

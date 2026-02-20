@@ -16,4 +16,6 @@ config:
   backend-infra:maxCapacity: "1"
   backend-infra:minCapacity: "1"
   database:password:
-    secure: AAABAEehTSfwNmB6vkYwme9x3zqVq26cI4/cYraQM8xvKQYrGpjZzg==
+    secure: AAABAK6stS4JWf9FKfPKkwtep1/TFuhq3NwXh30s6q1QM8cAWe732A==
+  backend-infra:org: an
+  backend-infra:app: blumberg

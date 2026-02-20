@@ -30,7 +30,7 @@ build:
 
 # 1) Setup: stack + config. Si eliges otro stack en la lista, el setup aplica la config a ese stack.
 setup:
-	cd "$(ROOT)" && node scripts/ensure-stack.js $(STACK) "$(FRONTEND)" "$(BACKEND)" "$(INFRA_PERMS)"
+	cd "$(ROOT)" && node scripts/ensure-stack.js $(STACK) "$(FRONTEND)" "$(BACKEND)" "$(INFRA_PERMS)" "$(RUNTIME_PERMS)"
 	cd "$(ROOT)" && node scripts/apply-stack-config.js $(STACK) "$(FRONTEND)" "$(BACKEND)" "$(INFRA_PERMS)" "$(FRONTEND_REPO_URL)" "$(FRONTEND_BRANCH)"
 
 # 2) Despliega la policy IAM para quien hace deploy. Una vez; luego adjunta la policy al usuario.

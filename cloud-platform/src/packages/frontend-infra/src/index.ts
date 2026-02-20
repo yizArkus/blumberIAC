@@ -13,6 +13,14 @@ function requireNumber(key: string): number {
   return v;
 }
 
+function requireBoolean(key: string): boolean {
+  const v = config.getBoolean(key);
+  if (v === undefined) {
+    throw new Error(`Config requerida faltante: "${key}". Declárala en Pulumi.<stack>.yaml o: pulumi config set ${key} true|false`);
+  }
+  return v;
+}
+
 const provider = config.require("cloudProvider") as CloudProvider;
 const region = config.require("cloudRegion");
 const budgetLimit = requireNumber("budgetLimit");
@@ -22,10 +30,10 @@ const repoUrl = config.get("frontendRepoUrl");
 const branch = config.get("frontendBranch");
 const framework = config.get("frontendFramework");
 const githubToken = config.getSecret("githubToken");
-const appRootRaw = config.get("frontendAppRoot");
-const appRoot = (appRootRaw === "" || appRootRaw === undefined) ? undefined : appRootRaw;
-const enableDns = config.getBoolean("enableDns") ?? false;
-const enableWaf = config.getBoolean("enableWaf") ?? false;
+const appRootRaw = config.require("frontendAppRoot");
+const appRoot = appRootRaw === "" ? undefined : appRootRaw;
+const enableDns = requireBoolean("enableDns");
+const enableWaf = requireBoolean("enableWaf");
 
 if (repoUrl && !githubToken) {
   pulumi.log.error(
@@ -72,4 +80,6 @@ export const budgetLimitOut = budgetLimit;
 
 export const dnsZoneId = enableDns ? (ctx.dns as { zoneId: pulumi.Output<string> }).zoneId : undefined;
 export const dnsNameServers = enableDns ? (ctx.dns as { nameServers: pulumi.Output<string[]> }).nameServers : undefined;
-export const firewallId = enableWaf ? (ctx.firewall as { firewallId: pulumi.Output<string> }).firewallId : undefined;
+const firewallOut = enableWaf ? (ctx.firewall as { firewallId: pulumi.Output<string>; firewallArn?: pulumi.Output<string> }) : undefined;
+export const firewallId = firewallOut?.firewallId;
+export const firewallArn = firewallOut?.firewallArn;

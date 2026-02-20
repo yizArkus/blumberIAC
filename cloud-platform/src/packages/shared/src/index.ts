@@ -1,3 +1,4 @@
 export * from "./types";
 export * from "./components";
 export * from "./descriptors";
+export * from "./nameTag";

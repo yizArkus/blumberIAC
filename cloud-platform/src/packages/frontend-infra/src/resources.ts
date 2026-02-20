@@ -3,6 +3,7 @@
  * Hosting: Amplify (AWS) / Static Web Apps (Azure) / Firebase Hosting (GCP).
  */
 import * as pulumi from "@pulumi/pulumi";
+import { nameTag } from "@cloud-platform/shared";
 import type { ResourceDescriptor } from "@cloud-platform/shared";
 
 export interface FrontendResourcesOptions {
@@ -29,7 +30,7 @@ export function getFrontendResources(
     {
       type: "frontendHosting",
       key: "frontendHosting",
-      name: `frontend-${stackName}`,
+      name: nameTag("frontend"),
       repoUrl,
       branch,
       framework,
@@ -41,7 +42,7 @@ export function getFrontendResources(
     resources.push({
       type: "dns",
       key: "dns",
-      name: `frontend-dns-${stackName}`,
+      name: nameTag("frontend-dns"),
       domain,
     });
   }
@@ -49,7 +50,7 @@ export function getFrontendResources(
     resources.push({
       type: "firewall",
       key: "firewall",
-      name: `frontend-waf-${stackName}`,
+      name: nameTag("frontend-waf"),
       scope: "global",
     });
   }

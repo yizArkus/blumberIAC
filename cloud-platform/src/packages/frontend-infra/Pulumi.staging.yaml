@@ -1,5 +1,8 @@
 config:
-  cloudProvider: aws
-  cloudRegion: us-east-1
-  domain: example.com
-  budgetLimit: "150"
+  frontend-infra:cloudProvider: aws
+  frontend-infra:cloudRegion: us-east-1
+  frontend-infra:domain: example.com
+  frontend-infra:budgetLimit: "150"
+  frontend-infra:frontendAppRoot: ""
+  frontend-infra:enableDns: false
+  frontend-infra:enableWaf: false

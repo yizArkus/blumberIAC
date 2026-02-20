@@ -1,7 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
+import { nameTag } from "@cloud-platform/shared";
 
 const config = new pulumi.Config();
-const stackName = pulumi.getStack();
 const region = config.require("cloudRegion");
 const provider = config.require("cloudProvider") as "aws" | "azure" | "gcp";
 
@@ -15,7 +15,7 @@ if (provider === "aws") {
   const appRuntimePolicy = new aws.iam.Policy(
     "app-runtime-policy",
     {
-      name: `cloud-platform-app-runtime-${stackName}`,
+      name: nameTag("app-runtime-policy"),
       description: "Minimal permissions for backend/frontend at runtime: secrets, RDS connect, logs.",
       policy: JSON.stringify({
         Version: "2012-10-17",
@@ -47,7 +47,7 @@ if (provider === "aws") {
   const appRuntimeRole = new aws.iam.Role(
     "app-runtime-role",
     {
-      name: `cloud-platform-app-runtime-${stackName}`,
+      name: nameTag("app-runtime-role"),
       assumeRolePolicy: JSON.stringify({
         Version: "2012-10-17",
         Statement: [

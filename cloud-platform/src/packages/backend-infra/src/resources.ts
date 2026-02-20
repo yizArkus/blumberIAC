@@ -3,6 +3,7 @@
  * El orden importa: los recursos pueden referenciar salidas de los anteriores con { ref: "key.prop" }.
  */
 import type { Output } from "@pulumi/pulumi";
+import { nameTag } from "@cloud-platform/shared";
 import type { ResourceDescriptor } from "@cloud-platform/shared";
 
 export interface BackendResourcesConfig {
@@ -31,7 +32,7 @@ export function getBackendResources(stackName: string, config: BackendResourcesC
     {
       type: "network",
       key: "network",
-      name: `backend-${stackName}`,
+      name: nameTag("backend-network"),
       cidrBlock: "10.1.0.0/16",
       publicSubnetCidrs: ["10.1.1.0/24", "10.1.2.0/24"],
       privateSubnetCidrs: ["10.1.10.0/24", "10.1.11.0/24"],
@@ -39,14 +40,14 @@ export function getBackendResources(stackName: string, config: BackendResourcesC
     {
       type: "loadBalancer",
       key: "loadBalancer",
-      name: `backend-lb-${stackName}`,
+      name: nameTag("backend-lb"),
       isPublic: true,
       subnetIds: { ref: "network.publicSubnetIds" },
     },
     {
       type: "containerService",
       key: "containerService",
-      name: `backend-svc-${stackName}`,
+      name: nameTag("backend-svc"),
       cpu: 0.25,
       memory: 512,
       image: config.containerImage,
@@ -59,7 +60,7 @@ export function getBackendResources(stackName: string, config: BackendResourcesC
     {
       type: "database",
       key: "database",
-      name: `backend-db-${stackName}`,
+      name: nameTag("backend-db"),
       instanceSize: config.dbSize,
       storageGb: db.storageGb,
       subnetIds: { ref: "network.privateSubnetIds" },
@@ -75,12 +76,12 @@ export function getBackendResources(stackName: string, config: BackendResourcesC
     {
       type: "secrets",
       key: "secrets",
-      name: `backend-secrets-${stackName}`,
+      name: nameTag("backend-secrets"),
     },
     {
       type: "monitoring",
       key: "monitoring",
-      name: `backend-${stackName}`,
+      name: nameTag("backend-monitoring"),
       logRetentionDays: 7,
     },
   ];

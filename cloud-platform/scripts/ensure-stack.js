@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 /**
  * Comprueba el stack en todos los paquetes; si ya existe en alguno, pregunta UNA vez si mantenerlo.
- * Uso: node ensure-stack.js <stackName> <frontendDir> <backendDir> <infraPermsDir>
+ * Uso: node ensure-stack.js <stackName> <frontendDir> <backendDir> <infraPermsDir> [runtimePermsDir]
  */
 const { execSync } = require("child_process");
 const readline = require("readline");
 const path = require("path");
 const fs = require("fs");
 
-const [stackName, frontendDir, backendDir, infraPermsDir] = process.argv.slice(2);
+const [stackName, frontendDir, backendDir, infraPermsDir, runtimePermsDir] = process.argv.slice(2);
 if (!stackName || !frontendDir || !backendDir || !infraPermsDir) {
-  console.error("Uso: node ensure-stack.js <stackName> <frontendDir> <backendDir> <infraPermsDir>");
+  console.error("Uso: node ensure-stack.js <stackName> <frontendDir> <backendDir> <infraPermsDir> [runtimePermsDir]");
   process.exit(2);
 }
 
@@ -20,6 +20,10 @@ const packages = [
   { dir: path.resolve(ROOT, backendDir), label: "backend-infra" },
   { dir: path.resolve(ROOT, infraPermsDir), label: "infra-permissions" },
 ];
+if (runtimePermsDir) {
+  const runtimeDir = path.resolve(ROOT, runtimePermsDir);
+  if (fs.existsSync(runtimeDir)) packages.push({ dir: runtimeDir, label: "runtime-permissions" });
+}
 
 for (const p of packages) {
   if (!fs.existsSync(p.dir)) {

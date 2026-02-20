@@ -6,3 +6,6 @@ config:
   frontend-infra:domain: example.com
   frontend-infra:frontendRepoUrl: https://github.com/yizArkus/blumberIAC
   frontend-infra:frontendBranch: main
+  frontend-infra:frontendAppRoot: ""
+  frontend-infra:enableDns: false
+  frontend-infra:enableWaf: false
