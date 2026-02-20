@@ -1,0 +1,5 @@
+config:
+  cloudProvider: aws
+  cloudRegion: us-east-1
+  domain: example.com
+  budgetLimit: "150"

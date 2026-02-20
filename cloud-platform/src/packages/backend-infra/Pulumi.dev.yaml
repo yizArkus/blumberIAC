@@ -1,0 +1,18 @@
+# Stack dev. Set secret: pulumi config set --secret database:password "xxx"
+config:
+  cloudProvider: aws
+  cloudRegion: us-east-1
+  instanceSize: t3.micro
+  dbSize: db.t4g.micro
+  minCapacity: "1"
+  maxCapacity: "1"
+  budgetLimit: "150"
+  containerImage: nginx:alpine
+  database:engine: postgres
+  database:engineVersion: "15"
+  database:username: admin
+  database:storageGb: "20"
+  database:storageType: gp3
+  database:dbName: blumberg
+  database:publiclyAccessible: "false"
+  database:skipFinalSnapshot: "true"

@@ -1,0 +1,3 @@
+name: runtime-permissions
+runtime: nodejs
+description: IAM roles and policies for app runtime (ECS tasks, Lambda, etc. - secrets, DB, logs)

@@ -1,0 +1,6 @@
+# Stack dev. Keys without colons to avoid Pulumi Cloud parsing issues.
+config:
+  frontend-infra:budgetLimit: "150"
+  frontend-infra:cloudProvider: aws
+  frontend-infra:cloudRegion: us-east-1
+  frontend-infra:domain: example.com

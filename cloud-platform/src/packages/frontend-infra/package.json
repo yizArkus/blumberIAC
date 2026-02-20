@@ -1,0 +1,19 @@
+{
+  "name": "@cloud-platform/frontend-infra",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "npx tsc",
+    "deploy": "pulumi up",
+    "preview": "pulumi preview",
+    "destroy": "pulumi destroy"
+  },
+  "dependencies": {
+    "@cloud-platform/shared": "1.0.0",
+    "@cloud-platform/provider-factory": "1.0.0",
+    "@pulumi/pulumi": "^3.100.0"
+  },
+  "devDependencies": {
+    "typescript": "~5.3.0"
+  }
+}

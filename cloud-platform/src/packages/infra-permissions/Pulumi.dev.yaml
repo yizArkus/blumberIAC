@@ -1,0 +1,5 @@
+# Stack dev. Config for infra-permissions (no cloud provider config needed for IAM).
+
+config:
+  infra-permissions:cloudProvider: aws
+  infra-permissions:cloudRegion: us-east-1

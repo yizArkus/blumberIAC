@@ -1,0 +1,12 @@
+{
+  "description": "Ejemplo de política para el rol App Runtime (identidad del backend/frontend en ejecución). Privilegios mínimos. Sin S3/bucket.",
+  "conceptualRole": "App Runtime",
+  "awsExample": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {"Sid": "ReadSecrets", "Effect": "Allow", "Action": ["secretsmanager:GetSecretValue"], "Resource": "arn:aws:secretsmanager:*:*:secret:backend-*"},
+      {"Sid": "DatabaseAccess", "Effect": "Allow", "Action": ["rds-db:connect"], "Resource": "arn:aws:rds-db:*:*:dbuser:*/backend-*"},
+      {"Sid": "WriteLogs", "Effect": "Allow", "Action": ["logs:CreateLogStream", "logs:PutLogEvents"], "Resource": "arn:aws:logs:*:*:log-group:/cloud-platform/*"}
+    ]
+  }
+}

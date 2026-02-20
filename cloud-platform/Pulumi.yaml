@@ -1,0 +1,7 @@
+# Root project descriptor for cloud-platform.
+# Actual Pulumi projects live in packages/frontend-infra and packages/backend-infra.
+# Use: cd packages/frontend-infra && pulumi up
+# Or:  cd packages/backend-infra && pulumi up
+name: cloud-platform
+runtime: nodejs
+description: Multi-cloud platform - deploy frontend-infra or backend-infra from their packages

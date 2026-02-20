@@ -1,0 +1,3 @@
+name: backend-infra
+runtime: nodejs
+description: Backend infrastructure - container service, load balancer, database, secrets, monitoring (multi-cloud)

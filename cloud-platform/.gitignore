@@ -1,0 +1,12 @@
+node_modules/
+dist/
+*.log
+.env
+.env.*
+!.env.example
+Pulumi.*.yaml
+!Pulumi.yaml
+!Pulumi.dev.yaml
+!Pulumi.staging.yaml
+!Pulumi.prod.yaml
+.pulumi/
