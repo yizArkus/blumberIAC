@@ -23,7 +23,7 @@ const branch = config.get("frontendBranch");
 const framework = config.get("frontendFramework");
 const githubToken = config.getSecret("githubToken");
 const appRootRaw = config.get("frontendAppRoot");
-const appRoot = appRootRaw === "" ? undefined : (appRootRaw ?? "front-end");
+const appRoot = (appRootRaw === "" || appRootRaw === undefined) ? undefined : appRootRaw;
 const enableDns = config.getBoolean("enableDns") ?? false;
 const enableWaf = config.getBoolean("enableWaf") ?? false;
 

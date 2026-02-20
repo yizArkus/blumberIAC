@@ -7,4 +7,4 @@ config:
   frontend-infra:frontendBranch: main
   frontend-infra:githubToken:
     secure: AAABAAp8nC8PhvPjroYQAaw1A10KsekpvtEtAO+it7VfEtd3yatrLRIMqwtDPdp76IX+9hNJd4cZABmSgLcBEiQg2+qyHO21
-  frontend-infra:frontendAppRoot: front-end
+  frontend-infra:frontendAppRoot: ddd

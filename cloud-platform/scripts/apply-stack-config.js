@@ -47,7 +47,7 @@ async function main() {
   let savedRepoUrl = frontendRepoUrl || "";
   let savedBranch = frontendBranch || "main";
   let savedDeployPrincipalArn = "";
-  let savedFrontendAppRoot = "front-end";
+  let savedFrontendAppRoot = "";
   if (fs.existsSync(setupFile)) {
     try {
       const saved = JSON.parse(fs.readFileSync(setupFile, "utf8"));
@@ -55,7 +55,7 @@ async function main() {
       if (saved.cloudRegion) cloudRegion = saved.cloudRegion;
       if (saved.frontendRepoUrl != null) savedRepoUrl = saved.frontendRepoUrl;
       if (saved.frontendBranch) savedBranch = saved.frontendBranch;
-      if (saved.frontendAppRoot) savedFrontendAppRoot = saved.frontendAppRoot;
+      if (saved.frontendAppRoot != null) savedFrontendAppRoot = saved.frontendAppRoot;
       if (saved.deployPrincipalArn) savedDeployPrincipalArn = saved.deployPrincipalArn;
     } catch (_) {}
   }
@@ -72,7 +72,8 @@ async function main() {
     : "URL del repo (ej. https://github.com/usuario/repo; vacío = sin repo, conectar después en consola) []: ";
   const repoAnswer = await ask(repoPrompt);
   const branchAnswer = await ask(`Rama (ej. main) [${savedBranch}]: `);
-  const appRootAnswer = await ask(`Ruta al frontend en el repo (vacío o . = raíz, no monorepo; ej. front-end) [${savedFrontendAppRoot}]: `);
+  const appRootLabel = savedFrontendAppRoot === "" ? "raíz (no monorepo)" : savedFrontendAppRoot;
+  const appRootAnswer = await ask(`Ruta al frontend en el repo (Enter = raíz; monorepo = ej. front-end) [${appRootLabel}]: `);
   const tokenAnswer = await ask("Token de GitHub (opcional; se guarda como secreto en Pulumi; vacío = no guardar): ");
 
   const finalRepoUrl = repoAnswer !== "" ? repoAnswer : savedRepoUrl;

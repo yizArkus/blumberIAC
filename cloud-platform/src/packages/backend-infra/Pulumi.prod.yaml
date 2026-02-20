@@ -16,4 +16,4 @@ config:
   backend-infra:maxCapacity: "1"
   backend-infra:minCapacity: "1"
   database:password:
-    secure: AAABADO8b8Hzdo3tMhWCNd8rcUuuMXLCLqw3aoKbqwWSzX3nq10r+w==
+    secure: AAABAEehTSfwNmB6vkYwme9x3zqVq26cI4/cYraQM8xvKQYrGpjZzg==
