@@ -1,0 +1,672 @@
+{
+    "version": 3,
+    "deployment": {
+        "manifest": {
+            "time": "2026-02-23T12:46:13.6286943-07:00",
+            "magic": "62922168dd48854782ad554a2b389937b73c7075c9b3f5823c1c3d7d5f91673d",
+            "version": "v3.216.0"
+        },
+        "secrets_providers": {
+            "type": "service",
+            "state": {
+                "url": "https://api.pulumi.com",
+                "owner": "yizreela-org",
+                "project": "frontend-infra",
+                "stack": "prod"
+            }
+        },
+        "metadata": {},
+        "resources": [
+            {
+                "urn": "urn:pulumi:prod::frontend-infra::pulumi:pulumi:Stack::frontend-infra-prod",
+                "custom": false,
+                "type": "pulumi:pulumi:Stack",
+                "outputs": {
+                    "budgetLimitOut": 150,
+                    "firewallArn": "arn:aws:wafv2:us-east-1:201462387644:global/webacl/an-blumberg-prod-frontend-waf-eb6f/0e869739-df6d-40d1-85d3-07f65d3a0f35",
+                    "firewallId": "0e869739-df6d-40d1-85d3-07f65d3a0f35",
+                    "frontendAppId": "d12imxs28sqrqv",
+                    "frontendAppUrl": "https://main.d12imxs28sqrqv.amplifyapp.com",
+                    "providerOut": "aws",
+                    "regionOut": "us-west-2"
+                },
+                "created": "2026-02-23T19:14:53.5220965Z",
+                "modified": "2026-02-23T19:14:53.5220965Z"
+            },
+            {
+                "urn": "urn:pulumi:prod::frontend-infra::pulumi:providers:aws::waf-global",
+                "custom": true,
+                "id": "fa90d31d-b2be-48c9-95dc-7496e8c210c0",
+                "type": "pulumi:providers:aws",
+                "inputs": {
+                    "__internal": {},
+                    "region": "us-east-1",
+                    "skipCredentialsValidation": "false",
+                    "skipRegionValidation": "true",
+                    "version": "6.83.2"
+                },
+                "outputs": {
+                    "region": "us-east-1",
+                    "skipCredentialsValidation": "false",
+                    "skipRegionValidation": "true",
+                    "version": "6.83.2"
+                },
+                "parent": "urn:pulumi:prod::frontend-infra::pulumi:pulumi:Stack::frontend-infra-prod",
+                "propertyDependencies": {
+                    "region": [],
+                    "skipCredentialsValidation": [],
+                    "skipRegionValidation": []
+                },
+                "additionalSecretOutputs": [
+                    "accessKey",
+                    "secretKey",
+                    "token"
+                ],
+                "created": "2026-02-23T19:14:55.7220239Z",
+                "modified": "2026-02-23T19:14:55.7220239Z"
+            },
+            {
+                "urn": "urn:pulumi:prod::frontend-infra::pulumi:providers:aws::default_6_83_2",
+                "custom": true,
+                "id": "fabfc70e-2e08-4244-b36f-69c70cb31842",
+                "type": "pulumi:providers:aws",
+                "inputs": {
+                    "__internal": {},
+                    "region": "us-west-2",
+                    "skipCredentialsValidation": "false",
+                    "skipRegionValidation": "true",
+                    "version": "6.83.2"
+                },
+                "outputs": {
+                    "region": "us-west-2",
+                    "skipCredentialsValidation": "false",
+                    "skipRegionValidation": "true",
+                    "version": "6.83.2"
+                },
+                "created": "2026-02-23T19:14:58.1749851Z",
+                "modified": "2026-02-23T19:14:58.1749851Z"
+            },
+            {
+                "urn": "urn:pulumi:prod::frontend-infra::pulumi:providers:aws::waf-us-east-1",
+                "custom": true,
+                "id": "a8f9f52a-7c92-4bf4-9bf8-d90f4fec8dc9",
+                "type": "pulumi:providers:aws",
+                "inputs": {
+                    "__internal": {},
+                    "region": "us-east-1",
+                    "skipCredentialsValidation": "false",
+                    "skipRegionValidation": "true",
+                    "version": "6.83.2"
+                },
+                "outputs": {
+                    "region": "us-east-1",
+                    "skipCredentialsValidation": "false",
+                    "skipRegionValidation": "true",
+                    "version": "6.83.2"
+                },
+                "parent": "urn:pulumi:prod::frontend-infra::pulumi:pulumi:Stack::frontend-infra-prod",
+                "propertyDependencies": {
+                    "region": [],
+                    "skipCredentialsValidation": [],
+                    "skipRegionValidation": []
+                },
+                "additionalSecretOutputs": [
+                    "accessKey",
+                    "secretKey",
+                    "token"
+                ],
+                "created": "2026-02-23T19:14:57.0395556Z",
+                "modified": "2026-02-23T19:14:57.0395556Z"
+            },
+            {
+                "urn": "urn:pulumi:prod::frontend-infra::aws:wafv2/webAcl:WebAcl::an-blumberg-prod-frontend-waf-eb6f",
+                "custom": true,
+                "id": "0e869739-df6d-40d1-85d3-07f65d3a0f35",
+                "type": "aws:wafv2/webAcl:WebAcl",
+                "inputs": {
+                    "__defaults": [],
+                    "defaultAction": {
+                        "__defaults": [],
+                        "allow": {
+                            "__defaults": []
+                        }
+                    },
+                    "name": "an-blumberg-prod-frontend-waf-eb6f",
+                    "rules": [
+                        {
+                            "__defaults": [],
+                            "name": "an-blumberg-prod-frontend-waf-eb6f-common-ruleset",
+                            "overrideAction": {
+                                "__defaults": [],
+                                "none": {
+                                    "__defaults": []
+                                }
+                            },
+                            "priority": 1,
+                            "statement": {
+                                "__defaults": [],
+                                "managedRuleGroupStatement": {
+                                    "__defaults": [],
+                                    "name": "AWSManagedRulesCommonRuleSet",
+                                    "vendorName": "AWS"
+                                }
+                            },
+                            "visibilityConfig": {
+                                "__defaults": [],
+                                "cloudwatchMetricsEnabled": true,
+                                "metricName": "an-blumberg-prod-frontend-waf-eb6f-CommonRuleSet",
+                                "sampledRequestsEnabled": true
+                            }
+                        },
+                        {
+                            "__defaults": [],
+                            "name": "an-blumberg-prod-frontend-waf-eb6f-ip-reputation",
+                            "overrideAction": {
+                                "__defaults": [],
+                                "none": {
+                                    "__defaults": []
+                                }
+                            },
+                            "priority": 2,
+                            "statement": {
+                                "__defaults": [],
+                                "managedRuleGroupStatement": {
+                                    "__defaults": [],
+                                    "name": "AWSManagedRulesAmazonIpReputationList",
+                                    "ruleActionOverrides": [
+                                        {
+                                            "__defaults": [],
+                                            "actionToUse": {
+                                                "__defaults": [],
+                                                "block": {
+                                                    "__defaults": []
+                                                }
+                                            },
+                                            "name": "AWSManagedRPDoSList"
+                                        },
+                                        {
+                                            "__defaults": [],
+                                            "actionToUse": {
+                                                "__defaults": [],
+                                                "block": {
+                                                    "__defaults": []
+                                                }
+                                            },
+                                            "name": "AWSManagedIPDDoSList"
+                                        }
+                                    ],
+                                    "vendorName": "AWS"
+                                }
+                            },
+                            "visibilityConfig": {
+                                "__defaults": [],
+                                "cloudwatchMetricsEnabled": true,
+                                "metricName": "an-blumberg-prod-frontend-waf-eb6f-IpReputation",
+                                "sampledRequestsEnabled": true
+                            }
+                        },
+                        {
+                            "__defaults": [],
+                            "action": {
+                                "__defaults": [],
+                                "block": {
+                                    "__defaults": []
+                                }
+                            },
+                            "name": "an-blumberg-prod-frontend-waf-eb6f-rate-limit",
+                            "priority": 3,
+                            "statement": {
+                                "__defaults": [],
+                                "rateBasedStatement": {
+                                    "__defaults": [],
+                                    "aggregateKeyType": "IP",
+                                    "evaluationWindowSec": 60,
+                                    "limit": 1000
+                                }
+                            },
+                            "visibilityConfig": {
+                                "__defaults": [],
+                                "cloudwatchMetricsEnabled": true,
+                                "metricName": "an-blumberg-prod-frontend-waf-eb6f-RateLimit",
+                                "sampledRequestsEnabled": true
+                            }
+                        }
+                    ],
+                    "scope": "CLOUDFRONT",
+                    "tags": {
+                        "Component": "frontend-infra",
+                        "Name": "an-blumberg-prod-frontend-waf-eb6f",
+                        "Project": "cloud-platform",
+                        "Stack": "prod"
+                    },
+                    "tagsAll": {
+                        "Component": "frontend-infra",
+                        "Name": "an-blumberg-prod-frontend-waf-eb6f",
+                        "Project": "cloud-platform",
+                        "Stack": "prod"
+                    },
+                    "visibilityConfig": {
+                        "__defaults": [],
+                        "cloudwatchMetricsEnabled": true,
+                        "metricName": "an-blumberg-prod-frontend-waf-eb6f",
+                        "sampledRequestsEnabled": true
+                    }
+                },
+                "outputs": {
+                    "applicationIntegrationUrl": "",
+                    "arn": "arn:aws:wafv2:us-east-1:201462387644:global/webacl/an-blumberg-prod-frontend-waf-eb6f/0e869739-df6d-40d1-85d3-07f65d3a0f35",
+                    "associationConfig": null,
+                    "capacity": 727,
+                    "captchaConfig": null,
+                    "challengeConfig": null,
+                    "customResponseBodies": [],
+                    "dataProtectionConfig": null,
+                    "defaultAction": {
+                        "allow": {
+                            "customRequestHandling": null
+                        },
+                        "block": null
+                    },
+                    "description": "",
+                    "id": "0e869739-df6d-40d1-85d3-07f65d3a0f35",
+                    "lockToken": "a61523aa-59b6-43f2-a653-510f25e08183",
+                    "name": "an-blumberg-prod-frontend-waf-eb6f",
+                    "namePrefix": "",
+                    "ruleJson": null,
+                    "rules": [
+                        {
+                            "action": {
+                                "allow": null,
+                                "block": {
+                                    "customResponse": null
+                                },
+                                "captcha": null,
+                                "challenge": null,
+                                "count": null
+                            },
+                            "captchaConfig": null,
+                            "challengeConfig": null,
+                            "name": "an-blumberg-prod-frontend-waf-eb6f-rate-limit",
+                            "overrideAction": null,
+                            "priority": 3,
+                            "ruleLabels": [],
+                            "statement": {
+                                "andStatement": null,
+                                "asnMatchStatement": null,
+                                "byteMatchStatement": null,
+                                "geoMatchStatement": null,
+                                "ipSetReferenceStatement": null,
+                                "labelMatchStatement": null,
+                                "managedRuleGroupStatement": null,
+                                "notStatement": null,
+                                "orStatement": null,
+                                "rateBasedStatement": {
+                                    "aggregateKeyType": "IP",
+                                    "customKeys": [],
+                                    "evaluationWindowSec": 60,
+                                    "forwardedIpConfig": null,
+                                    "limit": 1000,
+                                    "scopeDownStatement": null
+                                },
+                                "regexMatchStatement": null,
+                                "regexPatternSetReferenceStatement": null,
+                                "ruleGroupReferenceStatement": null,
+                                "sizeConstraintStatement": null,
+                                "sqliMatchStatement": null,
+                                "xssMatchStatement": null
+                            },
+                            "visibilityConfig": {
+                                "cloudwatchMetricsEnabled": true,
+                                "metricName": "an-blumberg-prod-frontend-waf-eb6f-RateLimit",
+                                "sampledRequestsEnabled": true
+                            }
+                        },
+                        {
+                            "action": null,
+                            "captchaConfig": null,
+                            "challengeConfig": null,
+                            "name": "an-blumberg-prod-frontend-waf-eb6f-common-ruleset",
+                            "overrideAction": {
+                                "count": null,
+                                "none": {}
+                            },
+                            "priority": 1,
+                            "ruleLabels": [],
+                            "statement": {
+                                "andStatement": null,
+                                "asnMatchStatement": null,
+                                "byteMatchStatement": null,
+                                "geoMatchStatement": null,
+                                "ipSetReferenceStatement": null,
+                                "labelMatchStatement": null,
+                                "managedRuleGroupStatement": {
+                                    "managedRuleGroupConfigs": [],
+                                    "name": "AWSManagedRulesCommonRuleSet",
+                                    "ruleActionOverrides": [],
+                                    "scopeDownStatement": null,
+                                    "vendorName": "AWS",
+                                    "version": ""
+                                },
+                                "notStatement": null,
+                                "orStatement": null,
+                                "rateBasedStatement": null,
+                                "regexMatchStatement": null,
+                                "regexPatternSetReferenceStatement": null,
+                                "ruleGroupReferenceStatement": null,
+                                "sizeConstraintStatement": null,
+                                "sqliMatchStatement": null,
+                                "xssMatchStatement": null
+                            },
+                            "visibilityConfig": {
+                                "cloudwatchMetricsEnabled": true,
+                                "metricName": "an-blumberg-prod-frontend-waf-eb6f-CommonRuleSet",
+                                "sampledRequestsEnabled": true
+                            }
+                        },
+                        {
+                            "action": null,
+                            "captchaConfig": null,
+                            "challengeConfig": null,
+                            "name": "an-blumberg-prod-frontend-waf-eb6f-ip-reputation",
+                            "overrideAction": {
+                                "count": null,
+                                "none": {}
+                            },
+                            "priority": 2,
+                            "ruleLabels": [],
+                            "statement": {
+                                "andStatement": null,
+                                "asnMatchStatement": null,
+                                "byteMatchStatement": null,
+                                "geoMatchStatement": null,
+                                "ipSetReferenceStatement": null,
+                                "labelMatchStatement": null,
+                                "managedRuleGroupStatement": {
+                                    "managedRuleGroupConfigs": [],
+                                    "name": "AWSManagedRulesAmazonIpReputationList",
+                                    "ruleActionOverrides": [
+                                        {
+                                            "actionToUse": {
+                                                "allow": null,
+                                                "block": {
+                                                    "customResponse": null
+                                                },
+                                                "captcha": null,
+                                                "challenge": null,
+                                                "count": null
+                                            },
+                                            "name": "AWSManagedRPDoSList"
+                                        },
+                                        {
+                                            "actionToUse": {
+                                                "allow": null,
+                                                "block": {
+                                                    "customResponse": null
+                                                },
+                                                "captcha": null,
+                                                "challenge": null,
+                                                "count": null
+                                            },
+                                            "name": "AWSManagedIPDDoSList"
+                                        }
+                                    ],
+                                    "scopeDownStatement": null,
+                                    "vendorName": "AWS",
+                                    "version": ""
+                                },
+                                "notStatement": null,
+                                "orStatement": null,
+                                "rateBasedStatement": null,
+                                "regexMatchStatement": null,
+                                "regexPatternSetReferenceStatement": null,
+                                "ruleGroupReferenceStatement": null,
+                                "sizeConstraintStatement": null,
+                                "sqliMatchStatement": null,
+                                "xssMatchStatement": null
+                            },
+                            "visibilityConfig": {
+                                "cloudwatchMetricsEnabled": true,
+                                "metricName": "an-blumberg-prod-frontend-waf-eb6f-IpReputation",
+                                "sampledRequestsEnabled": true
+                            }
+                        }
+                    ],
+                    "scope": "CLOUDFRONT",
+                    "tags": {
+                        "Component": "frontend-infra",
+                        "Name": "an-blumberg-prod-frontend-waf-eb6f",
+                        "Project": "cloud-platform",
+                        "Stack": "prod"
+                    },
+                    "tagsAll": {
+                        "Component": "frontend-infra",
+                        "Name": "an-blumberg-prod-frontend-waf-eb6f",
+                        "Project": "cloud-platform",
+                        "Stack": "prod"
+                    },
+                    "tokenDomains": null,
+                    "visibilityConfig": {
+                        "cloudwatchMetricsEnabled": true,
+                        "metricName": "an-blumberg-prod-frontend-waf-eb6f",
+                        "sampledRequestsEnabled": true
+                    }
+                },
+                "parent": "urn:pulumi:prod::frontend-infra::pulumi:pulumi:Stack::frontend-infra-prod",
+                "provider": "urn:pulumi:prod::frontend-infra::pulumi:providers:aws::waf-us-east-1::a8f9f52a-7c92-4bf4-9bf8-d90f4fec8dc9",
+                "propertyDependencies": {
+                    "defaultAction": [],
+                    "name": [],
+                    "rules": [],
+                    "scope": [],
+                    "tags": [],
+                    "visibilityConfig": []
+                },
+                "created": "2026-02-23T19:16:39.4875506Z",
+                "modified": "2026-02-23T19:16:39.4875506Z"
+            },
+            {
+                "urn": "urn:pulumi:prod::frontend-infra::aws:amplify/app:App::app",
+                "custom": true,
+                "id": "d12imxs28sqrqv",
+                "type": "aws:amplify/app:App",
+                "inputs": {
+                    "__defaults": [
+                        "platform"
+                    ],
+                    "accessToken": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "AAABAI6c/ubfs3xrXcZZEkIw5fbKiiHQ/lFIk3R3DNCAXWjIxC078WfLFDdZRTLpA+At+NxFnOhLT+SNJ6uBI1XxjpmWKyE/HuY="
+                    },
+                    "buildSpec": "version: 1\napplications:\n  - appRoot: front-end\n    frontend:\n      phases:\n        preBuild:\n          commands:\n            - npm ci\n        build:\n          commands:\n            - npm run build\n      artifacts:\n        baseDirectory: dist\n        files:\n          - '**/*'\n      cache:\n        paths:\n          - node_modules/**/*\n",
+                    "customRules": [
+                        {
+                            "__defaults": [],
+                            "source": "\u003c/^[^.]+$|\\.(?!(css|gif|ico|jpg|js|png|txt|svg|woff|ttf|map|json)$)([^.]+$)/\u003e",
+                            "status": "200",
+                            "target": "/index.html"
+                        }
+                    ],
+                    "environmentVariables": {
+                        "AMPLIFY_MONOREPO_APP_ROOT": "front-end"
+                    },
+                    "name": "an-blumberg-prod-frontend-69e4",
+                    "platform": "WEB",
+                    "repository": "https://github.com/yizArkus/blumberIAC",
+                    "tags": {
+                        "Component": "frontend-infra",
+                        "Name": "an-blumberg-prod-frontend-69e4",
+                        "Project": "cloud-platform",
+                        "Stack": "prod"
+                    },
+                    "tagsAll": {
+                        "Component": "frontend-infra",
+                        "Name": "an-blumberg-prod-frontend-69e4",
+                        "Project": "cloud-platform",
+                        "Stack": "prod"
+                    }
+                },
+                "outputs": {
+                    "accessToken": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "AAABAGTksKWNZ0zwVmDkd8ARbZj3WdYAKuc1XMNJvUDJYEWT2XejuW5t4p7J3tADNfXoubUvJ7jA9TrCVaab104yKIO7cUtbN8g="
+                    },
+                    "arn": "arn:aws:amplify:us-west-2:201462387644:apps/d12imxs28sqrqv",
+                    "autoBranchCreationConfig": null,
+                    "autoBranchCreationPatterns": null,
+                    "basicAuthCredentials": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "AAABANURUJ9BSwuaOh05Rn1sGLjyrGpD+5eZTBF8OpH/eA=="
+                    },
+                    "buildSpec": "version: 1\napplications:\n  - appRoot: front-end\n    frontend:\n      phases:\n        preBuild:\n          commands:\n            - npm ci\n        build:\n          commands:\n            - npm run build\n      artifacts:\n        baseDirectory: dist\n        files:\n          - '**/*'\n      cache:\n        paths:\n          - node_modules/**/*\n",
+                    "cacheConfig": {
+                        "type": "AMPLIFY_MANAGED_NO_COOKIES"
+                    },
+                    "computeRoleArn": "",
+                    "customHeaders": "",
+                    "customRules": [
+                        {
+                            "condition": "",
+                            "source": "\u003c/^[^.]+$|\\.(?!(css|gif|ico|jpg|js|png|txt|svg|woff|ttf|map|json)$)([^.]+$)/\u003e",
+                            "status": "200",
+                            "target": "/index.html"
+                        }
+                    ],
+                    "defaultDomain": "d12imxs28sqrqv.amplifyapp.com",
+                    "description": "",
+                    "enableAutoBranchCreation": false,
+                    "enableBasicAuth": false,
+                    "enableBranchAutoBuild": false,
+                    "enableBranchAutoDeletion": false,
+                    "environmentVariables": {
+                        "AMPLIFY_MONOREPO_APP_ROOT": "front-end"
+                    },
+                    "iamServiceRoleArn": "",
+                    "id": "d12imxs28sqrqv",
+                    "name": "an-blumberg-prod-frontend-69e4",
+                    "oauthToken": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "AAABAOB/8VixtRuV7ByYb01RltOgWaob+Rq7sTgCoKtQxvEh"
+                    },
+                    "platform": "WEB",
+                    "productionBranches": [],
+                    "repository": "https://github.com/yizArkus/blumberIAC",
+                    "tags": {
+                        "Component": "frontend-infra",
+                        "Name": "an-blumberg-prod-frontend-69e4",
+                        "Project": "cloud-platform",
+                        "Stack": "prod"
+                    },
+                    "tagsAll": {
+                        "Component": "frontend-infra",
+                        "Name": "an-blumberg-prod-frontend-69e4",
+                        "Project": "cloud-platform",
+                        "Stack": "prod"
+                    }
+                },
+                "parent": "urn:pulumi:prod::frontend-infra::pulumi:pulumi:Stack::frontend-infra-prod",
+                "provider": "urn:pulumi:prod::frontend-infra::pulumi:providers:aws::default_6_83_2::fabfc70e-2e08-4244-b36f-69c70cb31842",
+                "propertyDependencies": {
+                    "accessToken": [],
+                    "buildSpec": [],
+                    "customRules": [],
+                    "environmentVariables": [],
+                    "name": [],
+                    "repository": [],
+                    "tags": []
+                },
+                "additionalSecretOutputs": [
+                    "accessToken",
+                    "basicAuthCredentials",
+                    "oauthToken"
+                ],
+                "created": "2026-02-23T19:16:40.2741736Z",
+                "modified": "2026-02-23T19:16:40.2741736Z"
+            },
+            {
+                "urn": "urn:pulumi:prod::frontend-infra::aws:amplify/branch:Branch::branch",
+                "custom": true,
+                "id": "d12imxs28sqrqv/main",
+                "type": "aws:amplify/branch:Branch",
+                "inputs": {
+                    "__defaults": [],
+                    "appId": "d12imxs28sqrqv",
+                    "branchName": "main",
+                    "enableAutoBuild": true,
+                    "framework": "React",
+                    "stage": "PRODUCTION",
+                    "tags": {
+                        "Component": "frontend-infra",
+                        "Name": "an-blumberg-prod-frontend-69e4",
+                        "Project": "cloud-platform",
+                        "Stack": "prod"
+                    },
+                    "tagsAll": {
+                        "Component": "frontend-infra",
+                        "Name": "an-blumberg-prod-frontend-69e4",
+                        "Project": "cloud-platform",
+                        "Stack": "prod"
+                    }
+                },
+                "outputs": {
+                    "appId": "d12imxs28sqrqv",
+                    "arn": "arn:aws:amplify:us-west-2:201462387644:apps/d12imxs28sqrqv/branches/main",
+                    "associatedResources": [],
+                    "backendEnvironmentArn": "",
+                    "basicAuthCredentials": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "AAABANp0EmTLgL01JdCK9SaHrmdgFk1n8LBgnjs64gmvLA=="
+                    },
+                    "branchName": "main",
+                    "customDomains": [],
+                    "description": "",
+                    "destinationBranch": "",
+                    "displayName": "main",
+                    "enableAutoBuild": true,
+                    "enableBasicAuth": false,
+                    "enableNotification": false,
+                    "enablePerformanceMode": false,
+                    "enablePullRequestPreview": false,
+                    "environmentVariables": null,
+                    "framework": "React",
+                    "id": "d12imxs28sqrqv/main",
+                    "pullRequestEnvironmentName": "",
+                    "sourceBranch": "",
+                    "stage": "PRODUCTION",
+                    "tags": {
+                        "Component": "frontend-infra",
+                        "Name": "an-blumberg-prod-frontend-69e4",
+                        "Project": "cloud-platform",
+                        "Stack": "prod"
+                    },
+                    "tagsAll": {
+                        "Component": "frontend-infra",
+                        "Name": "an-blumberg-prod-frontend-69e4",
+                        "Project": "cloud-platform",
+                        "Stack": "prod"
+                    },
+                    "ttl": "5"
+                },
+                "parent": "urn:pulumi:prod::frontend-infra::pulumi:pulumi:Stack::frontend-infra-prod",
+                "dependencies": [
+                    "urn:pulumi:prod::frontend-infra::aws:amplify/app:App::app"
+                ],
+                "provider": "urn:pulumi:prod::frontend-infra::pulumi:providers:aws::default_6_83_2::fabfc70e-2e08-4244-b36f-69c70cb31842",
+                "propertyDependencies": {
+                    "appId": [
+                        "urn:pulumi:prod::frontend-infra::aws:amplify/app:App::app"
+                    ],
+                    "branchName": [],
+                    "enableAutoBuild": [],
+                    "framework": [],
+                    "stage": [],
+                    "tags": []
+                },
+                "additionalSecretOutputs": [
+                    "basicAuthCredentials"
+                ],
+                "created": "2026-02-23T19:16:41.2252265Z",
+                "modified": "2026-02-23T19:16:41.2252265Z"
+            }
+        ]
+    }
+}

@@ -56,6 +56,10 @@ if (provider === "aws") {
               "amplify:ListBranches",
               "amplify:UpdateApp",
               "amplify:UpdateBranch",
+              "amplify:AssociateWebACL",
+              "amplify:DisassociateWebACL",
+              "amplify:GetWebACL",
+              "amplify:GetWebACLForResource",
             ],
             Resource: "arn:aws:amplify:*:*:apps/*",
           },
@@ -68,6 +72,11 @@ if (provider === "aws") {
               "wafv2:UpdateWebACL",
               "wafv2:DeleteWebACL",
               "wafv2:ListWebACLs",
+              "wafv2:AssociateWebACL",
+              "wafv2:DisassociateWebACL",
+              "wafv2:GetWebACLForResource",
+              "wafv2:PutPermissionPolicy",
+              "wafv2:GetPermissionPolicy",
               "wafv2:ListRuleGroups",
               "wafv2:GetRuleGroup",
               "wafv2:ListAvailableManagedRuleGroups",
@@ -81,6 +90,22 @@ if (provider === "aws") {
               "arn:aws:wafv2:*:*:global/webacl/*",
               "arn:aws:wafv2:*:*:regional/managedruleset/*/*",
               "arn:aws:wafv2:*:*:global/managedruleset/*/*",
+            ],
+          },
+          {
+            Sid: "WAFv2Amplify",
+            Effect: "Allow",
+            Action: [
+              "wafv2:AssociateWebACL",
+              "wafv2:DisassociateWebACL",
+              "wafv2:GetWebACLForResource",
+            ],
+            // Disassociate/Associate authorize against the target resource ARN (e.g. Amplify app ARN)
+            // and may also require access to the Web ACL resource.
+            Resource: [
+              "arn:aws:amplify:*:*:apps/*",
+              "arn:aws:wafv2:*:*:regional/webacl/*",
+              "arn:aws:wafv2:*:*:global/webacl/*",
             ],
           },
         ],
@@ -117,7 +142,7 @@ if (provider === "aws") {
   infraDeployerRoleArn = infraDeployerRole.arn;
 } else {
   pulumi.log.info(
-    `infra-permissions: ${provider} aún no crea recursos de permisos; se exporta region. Extiende este paquete para RBAC en Azure/GCP.`
+    `infra-permissions: ${provider} does not create permission resources yet; region is exported. Extend this package for RBAC in Azure/GCP.`
   );
   const empty = pulumi.output("");
   infraDeployerPolicyArn = empty;

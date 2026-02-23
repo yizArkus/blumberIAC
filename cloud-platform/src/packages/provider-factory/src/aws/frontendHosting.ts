@@ -84,5 +84,6 @@ export function createAwsFrontendHosting(
   return {
     appUrl,
     appId: app.id,
+    appArn: app.arn,
   };
 }

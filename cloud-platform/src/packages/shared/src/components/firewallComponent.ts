@@ -15,7 +15,7 @@ export interface FirewallComponentArgs {
 
 export interface FirewallComponentOutputs {
   firewallId: Output<string>;
-  /** ARN del Web ACL (para asociar a CloudFront/Amplify). */
+  /** Web ACL ARN (for associating to the Amplify app). */
   firewallArn?: Output<string>;
 }
 

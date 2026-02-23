@@ -1,11 +1,11 @@
 /**
- * Descriptores de recursos genéricos para crear infraestructura de forma declarativa.
- * Las referencias (Ref) permiten enlazar salidas de un recurso como entrada de otro.
+ * Generic resource descriptors for declarative infrastructure.
+ * Refs allow wiring one resource's outputs as another's inputs.
  */
 
 import type { CloudProvider } from "./types";
 
-/** Referencia a la salida de otro recurso. Ej: { ref: "network.privateSubnetIds" } */
+/** Reference to another resource's output. E.g. { ref: "network.privateSubnetIds" } */
 export interface Ref {
   ref: string;
 }
@@ -14,11 +14,11 @@ export function isRef(x: unknown): x is Ref {
   return typeof x === "object" && x !== null && "ref" in x && typeof (x as Ref).ref === "string";
 }
 
-/** Base para todos los descriptores: nombre del recurso y clave para refs */
+/** Base for all descriptors: resource name and key for refs */
 export interface BaseDescriptor {
-  /** Nombre del recurso (usado en Pulumi y tags) */
+  /** Resource name (used in Pulumi and tags) */
   name: string;
-  /** Clave para referencias desde otros recursos. Si no se define, se usa name */
+  /** Key for references from other resources. If not set, name is used */
   key?: string;
   tags?: Record<string, string>;
 }
@@ -56,7 +56,7 @@ export interface DatabaseDescriptor extends BaseDescriptor {
   engine?: string;
   engineVersion?: string;
   username?: string;
-  /** Contraseña (puede ser Output<string> de config.getSecret). */
+  /** Password (can be Output<string> from config.getSecret). */
   password?: string | import("@pulumi/pulumi").Input<string>;
   storageType?: string;
   dbName?: string;
@@ -94,9 +94,9 @@ export interface FrontendHostingDescriptor extends BaseDescriptor {
   repoUrl?: string;
   branch?: string;
   framework?: string;
-  /** Token de acceso (GitHub, etc.) para conectar el repo; requerido si repoUrl está definido. */
+  /** Access token (GitHub, etc.) to connect the repo; required if repoUrl is set. */
   accessToken?: string | import("@pulumi/pulumi").Input<string>;
-  /** Ruta al frontend en el repo (monorepo). Ej: "front-end". */
+  /** Path to frontend in repo (monorepo). E.g. "front-end". */
   appRoot?: string;
 }
 
@@ -112,7 +112,7 @@ export type ResourceDescriptor =
   | FirewallDescriptor
   | FrontendHostingDescriptor;
 
-/** Contexto base inyectado en todos los recursos (provider, region, tags) */
+/** Base context injected into all resources (provider, region, tags) */
 export interface BaseContext {
   provider: CloudProvider;
   region: string;

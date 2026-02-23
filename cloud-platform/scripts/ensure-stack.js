@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Comprueba el stack en todos los paquetes; si ya existe en alguno, pregunta UNA vez si mantenerlo.
- * Uso: node ensure-stack.js <stackName> <frontendDir> <backendDir> <infraPermsDir> [runtimePermsDir]
+ * Ensures the stack exists in all packages; if it already exists in any, asks ONCE whether to keep it.
+ * Usage: node ensure-stack.js <stackName> <frontendDir> <backendDir> <infraPermsDir> [runtimePermsDir]
  */
 const { execSync } = require("child_process");
 const readline = require("readline");
@@ -10,7 +10,7 @@ const fs = require("fs");
 
 const [stackName, frontendDir, backendDir, infraPermsDir, runtimePermsDir] = process.argv.slice(2);
 if (!stackName || !frontendDir || !backendDir || !infraPermsDir) {
-  console.error("Uso: node ensure-stack.js <stackName> <frontendDir> <backendDir> <infraPermsDir> [runtimePermsDir]");
+  console.error("Usage: node ensure-stack.js <stackName> <frontendDir> <backendDir> <infraPermsDir> [runtimePermsDir]");
   process.exit(2);
 }
 
@@ -27,12 +27,12 @@ if (runtimePermsDir) {
 
 for (const p of packages) {
   if (!fs.existsSync(p.dir)) {
-    console.error("No existe el directorio:", p.dir);
+    console.error("Directory does not exist:", p.dir);
     process.exit(2);
   }
 }
 
-// Si ya hay un stack elegido (p. ej. prod), usarlo como referencia en lugar del argumento (dev).
+// If a stack is already selected (e.g. prod), use it as reference instead of the argument (dev).
 const stackFile = path.join(ROOT, ".pulumi-selected-stack");
 let currentStack = stackName;
 if (fs.existsSync(stackFile)) {
@@ -99,7 +99,7 @@ function ask(question) {
 }
 
 function wantsToKeep(answer) {
-  const first = (answer || "s").slice(0, 1);
+  const first = (answer || "y").slice(0, 1);
   return first === "s" || first === "y" || answer === "si" || answer === "yes";
 }
 
@@ -110,7 +110,7 @@ async function main() {
   for (const p of missing) {
     run(`pulumi stack init ${currentStack}`, p.dir);
     run(`pulumi stack select ${currentStack}`, p.dir);
-    console.log(`Stack "${currentStack}" creado en ${p.label}.`);
+    console.log(`Stack "${currentStack}" created in ${p.label}.`);
   }
 
   if (existing.length === 0) {
@@ -118,27 +118,27 @@ async function main() {
     process.exit(0);
   }
 
-  console.log(`\nEl stack "${currentStack}" ya existe en: ${existing.map((p) => p.label).join(", ")}.`);
-  const keep = await ask("¿Mantenerlo? (s/n): ");
+  console.log(`\nStack "${currentStack}" already exists in: ${existing.map((p) => p.label).join(", ")}.`);
+  const keep = await ask("Keep it? (y/n): ");
   if (wantsToKeep(keep)) {
     for (const p of existing) {
       run(`pulumi stack select ${currentStack}`, p.dir, true);
     }
     fs.writeFileSync(stackFile, currentStack, "utf8");
-    console.log("Se mantiene el stack en todos los paquetes.");
+    console.log("Stack kept in all packages.");
     process.exit(0);
   }
 
-  console.log("\nOpciones:");
-  console.log("  1) Listar stacks y elegir uno (si no existe en algún paquete, se crea ahí)");
-  console.log("  2) Cancelar");
-  const opt = (await ask("Elige (1 o 2): ")).trim();
+  console.log("\nOptions:");
+  console.log("  1) List stacks and pick one (if it does not exist in a package, it will be created there)");
+  console.log("  2) Cancel");
+  const opt = (await ask("Choose (1 or 2): ")).trim();
   if (opt === "2") {
-    console.log("Cancelado. Para otro stack: make setup STACK=<nombre>");
+    console.log("Cancelled. For another stack: make setup STACK=<name>");
     process.exit(0);
   }
   if (opt !== "1") {
-    console.log("Opción no válida. Cancelado.");
+    console.log("Invalid option. Cancelled.");
     process.exit(0);
   }
 
@@ -149,17 +149,17 @@ async function main() {
   }
   const stacks = [...allNames].sort();
   if (stacks.length === 0) {
-    console.log("No hay stacks en ningún paquete. Crea uno con: make setup STACK=dev");
+    console.log("No stacks in any package. Create one with: make setup STACK=dev");
     process.exit(0);
   }
-  console.log("Stacks disponibles (frontend, backend, infra-permissions):", stacks.join(", "));
-  const chosen = (await ask("Nombre del stack a usar (o Enter para cancelar): ")).trim();
+  console.log("Available stacks (frontend, backend, infra-permissions):", stacks.join(", "));
+  const chosen = (await ask("Stack name to use (or Enter to cancel): ")).trim();
   if (!chosen) {
-    console.log("Cancelado.");
+    console.log("Cancelled.");
     process.exit(0);
   }
   if (!stacks.includes(chosen)) {
-    console.log(`"${chosen}" no está en la lista. Stacks: ${stacks.join(", ")}`);
+    console.log(`"${chosen}" is not in the list. Stacks: ${stacks.join(", ")}`);
     process.exit(0);
   }
 
@@ -169,14 +169,14 @@ async function main() {
     } catch (_) {
       run(`pulumi stack init ${chosen}`, p.dir);
       run(`pulumi stack select ${chosen}`, p.dir);
-      console.log(`Stack "${chosen}" creado en ${p.label}.`);
+      console.log(`Stack "${chosen}" created in ${p.label}.`);
     }
   }
   for (const p of packages) {
     run(`pulumi stack select ${chosen}`, p.dir, true);
   }
   fs.writeFileSync(path.join(ROOT, ".pulumi-selected-stack"), chosen, "utf8");
-  console.log(`Stack cambiado a "${chosen}". El setup aplicará la config a este stack.`);
+  console.log(`Stack switched to "${chosen}". Setup will apply config to this stack.`);
   process.exit(0);
 }
 

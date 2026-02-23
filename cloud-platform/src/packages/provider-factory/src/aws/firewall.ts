@@ -5,14 +5,20 @@ import type {
 } from "@cloud-platform/shared";
 
 /**
- * Web ACL con scope CLOUDFRONT para asociar a la distribución de CloudFront (Amplify).
- * Restricciones de costo: sin logging, sin Bot Control; solo CommonRuleSet, IpReputation y rate limit.
- * Mantiene por debajo de ~$16/mes.
+ * Web ACL with CLOUDFRONT scope to associate to the Amplify app.
+ * Cost constraints: no logging, no Bot Control; only CommonRuleSet, IpReputation and rate limit.
+ * Keeps cost below ~$16/month.
+ *
+ * CLOUDFRONT-scoped Web ACLs can only be created in us-east-1 (AWS requirement).
+ * We use an explicit provider in us-east-1 when scope is global.
  */
-/** Límite de requests por IP; se evalúa en RATE_LIMIT_WINDOW_SEC. */
+/** Max requests per IP; evaluated over RATE_LIMIT_WINDOW_SEC. */
 const RATE_LIMIT_MAX_REQUESTS = 1000;
-/** Ventana de evaluación del rate limit (segundos). AWS permite 60, 120, 300, 600. */
+/** Rate limit evaluation window (seconds). AWS allows 60, 120, 300, 600. */
 const RATE_LIMIT_WINDOW_SEC = 60;
+
+/** Required region for WAF with CLOUDFRONT scope. */
+const WAF_GLOBAL_REGION = "us-east-1";
 
 function visibilityConfig(metricName: string) {
   return {
@@ -23,16 +29,21 @@ function visibilityConfig(metricName: string) {
 }
 
 export function createAwsFirewall(args: FirewallComponentArgs): FirewallComponentOutputs {
-  const tags = { ...args.tags, Name: args.name };
+  // Avoid names with newlines/spaces that corrupt Pulumi state (e.g. an-blumberg-prod-frontend-waf-eb6f\n)
+  const name = (args.name ?? "").replace(/\s+/g, " ").trim() || "frontend-waf";
+  const tags = { ...args.tags, Name: name };
   const scope = args.scope === "global" ? "CLOUDFRONT" : "REGIONAL";
 
-  const waf = new aws.wafv2.WebAcl(args.name, {
-    name: args.name,
+  const useGlobalProvider = scope === "CLOUDFRONT";
+  const wafProvider = useGlobalProvider ? new aws.Provider("waf-us-east-1", { region: WAF_GLOBAL_REGION }) : undefined;
+
+  const waf = new aws.wafv2.WebAcl(name, {
+    name,
     scope,
     defaultAction: { allow: {} },
     rules: [
       {
-        name: `${args.name}-common-ruleset`,
+        name: `${name}-common-ruleset`,
         priority: 1,
         overrideAction: { none: {} },
         statement: {
@@ -41,10 +52,10 @@ export function createAwsFirewall(args: FirewallComponentArgs): FirewallComponen
             name: "AWSManagedRulesCommonRuleSet",
           },
         },
-        visibilityConfig: visibilityConfig(`${args.name}-CommonRuleSet`),
+        visibilityConfig: visibilityConfig(`${name}-CommonRuleSet`),
       },
       {
-        name: `${args.name}-ip-reputation`,
+        name: `${name}-ip-reputation`,
         priority: 2,
         overrideAction: { none: {} },
         statement: {
@@ -57,10 +68,10 @@ export function createAwsFirewall(args: FirewallComponentArgs): FirewallComponen
             ],
           },
         },
-        visibilityConfig: visibilityConfig(`${args.name}-IpReputation`),
+        visibilityConfig: visibilityConfig(`${name}-IpReputation`),
       },
       {
-        name: `${args.name}-rate-limit`,
+        name: `${name}-rate-limit`,
         priority: 3,
         action: { block: {} },
         statement: {
@@ -70,16 +81,16 @@ export function createAwsFirewall(args: FirewallComponentArgs): FirewallComponen
             evaluationWindowSec: RATE_LIMIT_WINDOW_SEC,
           },
         },
-        visibilityConfig: visibilityConfig(`${args.name}-RateLimit`),
+        visibilityConfig: visibilityConfig(`${name}-RateLimit`),
       },
     ],
     visibilityConfig: {
       cloudwatchMetricsEnabled: true,
-      metricName: args.name,
+      metricName: name,
       sampledRequestsEnabled: true,
     },
-    tags: { ...tags, Name: args.name },
-  });
+    tags: { ...tags, Name: name },
+  }, wafProvider ? { provider: wafProvider } : undefined);
 
   return {
     firewallId: waf.id,

@@ -1,4 +1,5 @@
 import * as pulumi from "@pulumi/pulumi";
+import * as aws from "@pulumi/aws";
 import { createResources } from "@cloud-platform/provider-factory";
 import type { CloudProvider } from "@cloud-platform/shared";
 import { getFrontendResources } from "./resources";
@@ -8,7 +9,7 @@ const config = new pulumi.Config();
 function requireNumber(key: string): number {
   const v = config.getNumber(key);
   if (v === undefined) {
-    throw new Error(`Config requerida faltante: "${key}". Declárala en Pulumi.<stack>.yaml o: pulumi config set ${key} <valor>`);
+    throw new Error(`Missing required config: "${key}". Declare it in Pulumi.<stack>.yaml or: pulumi config set ${key} <value>`);
   }
   return v;
 }
@@ -16,7 +17,7 @@ function requireNumber(key: string): number {
 function requireBoolean(key: string): boolean {
   const v = config.getBoolean(key);
   if (v === undefined) {
-    throw new Error(`Config requerida faltante: "${key}". Declárala en Pulumi.<stack>.yaml o: pulumi config set ${key} true|false`);
+    throw new Error(`Missing required config: "${key}". Declare it in Pulumi.<stack>.yaml or: pulumi config set ${key} true|false`);
   }
   return v;
 }
@@ -33,17 +34,21 @@ const githubToken = config.getSecret("githubToken");
 const appRootRaw = config.require("frontendAppRoot");
 const appRoot = appRootRaw === "" ? undefined : appRootRaw;
 const enableDns = requireBoolean("enableDns");
-const enableWaf = requireBoolean("enableWaf");
+/** WAF is never created in dev/staging; in other stacks (e.g. prod) use config. */
+const enableWaf =
+  stackName === "dev" || stackName === "staging" ? false : requireBoolean("enableWaf");
+/** If true, WAF is not associated to the Amplify app (use when you will associate the Web ACL manually). */
+const skipWafAssociation = config.getBoolean("skipWafAssociation") ?? false;
 
 if (repoUrl && !githubToken) {
   pulumi.log.error(
-    `Stack "${stackName}": frontendRepoUrl está definido pero falta githubToken. ` +
-      "El token es por stack. Ejecuta: cd src/packages/frontend-infra && pulumi stack select " +
+    `Stack "${stackName}": frontendRepoUrl is set but githubToken is missing. ` +
+      "Token is per stack. Run: cd src/packages/frontend-infra && pulumi stack select " +
       stackName +
-      " && echo TU_TOKEN | pulumi config set --secret githubToken -"
+      " && echo YOUR_TOKEN | pulumi config set --secret githubToken -"
   );
   throw new Error(
-    `Falta githubToken para el stack "${stackName}". Configúralo con: pulumi config set --secret githubToken <token> (en frontend-infra)`
+    `Missing githubToken for stack "${stackName}". Configure with: pulumi config set --secret githubToken <token> (in frontend-infra)`
   );
 }
 
@@ -70,7 +75,11 @@ const ctx = createResources(provider, resources, {
   tags,
 });
 
-const frontendHosting = ctx.frontendHosting as { appUrl: pulumi.Output<string>; appId: pulumi.Output<string> };
+const frontendHosting = ctx.frontendHosting as {
+  appUrl: pulumi.Output<string>;
+  appId: pulumi.Output<string>;
+  appArn?: pulumi.Output<string>;
+};
 
 export const frontendAppUrl = frontendHosting.appUrl;
 export const frontendAppId = frontendHosting.appId;
@@ -83,3 +92,17 @@ export const dnsNameServers = enableDns ? (ctx.dns as { nameServers: pulumi.Outp
 const firewallOut = enableWaf ? (ctx.firewall as { firewallId: pulumi.Output<string>; firewallArn?: pulumi.Output<string> }) : undefined;
 export const firewallId = firewallOut?.firewallId;
 export const firewallArn = firewallOut?.firewallArn;
+
+// WAF association to Amplify app (WebAclAssociation does not support update, only replace)
+const wafGlobalRegion = "us-east-1";
+const wafProvider = provider === "aws" ? new aws.Provider("waf-global", { region: wafGlobalRegion }) : undefined;
+
+if (enableWaf && firewallOut?.firewallArn && !skipWafAssociation && provider === "aws" && frontendHosting.appArn && wafProvider) {
+  new aws.wafv2.WebAclAssociation("waf-to-amplify", {
+    resourceArn: frontendHosting.appArn,
+    webAclArn: firewallOut.firewallArn,
+  }, {
+    provider: wafProvider,
+    replaceOnChanges: ["resourceArn", "webAclArn"],
+  });
+}

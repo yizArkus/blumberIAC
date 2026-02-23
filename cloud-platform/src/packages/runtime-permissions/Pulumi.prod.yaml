@@ -3,3 +3,4 @@ config:
   runtime-permissions:cloudRegion: us-west-2
   runtime-permissions:org: an
   runtime-permissions:app: blumberg
+  aws:region: us-west-2

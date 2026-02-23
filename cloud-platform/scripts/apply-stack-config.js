@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Aplica la config de Pulumi al stack elegido. Pide al usuario proveedor y región de forma consciente.
- * Uso: node apply-stack-config.js <defaultStack> <frontendDir> <backendDir> <infraPermsDir> [frontendRepoUrl] [frontendBranch]
+ * Applies Pulumi config to the selected stack. Prompts user for provider and region.
+ * Usage: node apply-stack-config.js <defaultStack> <frontendDir> <backendDir> <infraPermsDir> [frontendRepoUrl] [frontendBranch]
  */
 const { execSync, spawnSync } = require("child_process");
 const path = require("path");
@@ -10,7 +10,7 @@ const readline = require("readline");
 
 const [defaultStack, frontendDir, backendDir, infraPermsDir, frontendRepoUrl = "", frontendBranch = "main"] = process.argv.slice(2);
 if (!defaultStack || !frontendDir || !backendDir || !infraPermsDir) {
-  console.error("Uso: node apply-stack-config.js <defaultStack> <frontendDir> <backendDir> <infraPermsDir> [frontendRepoUrl] [frontendBranch]");
+  console.error("Usage: node apply-stack-config.js <defaultStack> <frontendDir> <backendDir> <infraPermsDir> [frontendRepoUrl] [frontendBranch]");
   process.exit(2);
 }
 
@@ -65,45 +65,46 @@ async function main() {
     } catch (_) {}
   }
 
-  console.log("\n--- Nomenclatura (org-app-stack-logicalName-hash) ---");
-  const orgAnswer = await ask(`Org (ej. mi-org) [${savedOrg || "mi-org"}]: `);
-  const appAnswer = await ask(`App (ej. mi-app) [${savedApp || "mi-app"}]: `);
-  const finalOrg = orgAnswer || savedOrg || "mi-org";
-  const finalApp = appAnswer || savedApp || "mi-app";
+  console.log("\n--- Naming (org-app-stack-logicalName-hash) ---");
+  const orgAnswer = await ask(`Org (e.g. my-org) [${savedOrg || "my-org"}]: `);
+  const appAnswer = await ask(`App (e.g. my-app) [${savedApp || "my-app"}]: `);
+  const finalOrg = orgAnswer || savedOrg || "my-org";
+  const finalApp = appAnswer || savedApp || "my-app";
 
-  console.log("\n--- Proveedor y región (se aplican a frontend, backend e infra-permissions) ---");
-  const providerAnswer = await ask(`Cloud provider (ej. aws) [${cloudProvider}]: `);
-  const regionAnswer = await ask(`Región (ej. us-east-1, eu-west-1) [${cloudRegion}]: `);
+  console.log("\n--- Provider and region (applied to frontend, backend and infra-permissions) ---");
+  console.log("The region you choose is saved in the stack config (Pulumi.<stack>.yaml) and the code reads it from there.");
+  const providerAnswer = await ask(`Cloud provider (e.g. aws) [${cloudProvider}]: `);
+  const regionAnswer = await ask(`Region (e.g. us-east-1, us-west-2, eu-west-1) [${cloudRegion}]: `);
   cloudProvider = providerAnswer || cloudProvider;
   cloudRegion = regionAnswer || cloudRegion;
 
-  console.log("\n--- Repositorio GitHub (frontend / Amplify) ---");
+  console.log("\n--- GitHub repo (frontend / Amplify) ---");
   const repoPrompt = savedRepoUrl
-    ? `URL del repo (ej. https://github.com/usuario/repo) [${savedRepoUrl}]: `
-    : "URL del repo (ej. https://github.com/usuario/repo; vacío = sin repo, conectar después en consola) []: ";
+    ? `Repo URL (e.g. https://github.com/user/repo) [${savedRepoUrl}]: `
+    : "Repo URL (e.g. https://github.com/user/repo; empty = no repo, connect later in console) []: ";
   const repoAnswer = await ask(repoPrompt);
-  const branchAnswer = await ask(`Rama (ej. main) [${savedBranch}]: `);
-  const appRootLabel = savedFrontendAppRoot === "" ? "raíz (no monorepo)" : savedFrontendAppRoot;
-  const appRootAnswer = await ask(`Ruta al frontend en el repo (Enter = raíz; monorepo = ej. front-end) [${appRootLabel}]: `);
-  const tokenAnswer = await ask("Token de GitHub (opcional; se guarda como secreto en Pulumi; vacío = no guardar): ");
+  const branchAnswer = await ask(`Branch (e.g. main) [${savedBranch}]: `);
+  const appRootLabel = savedFrontendAppRoot === "" ? "root (no monorepo)" : savedFrontendAppRoot;
+  const appRootAnswer = await ask(`Path to frontend in repo (Enter = root; monorepo = e.g. front-end) [${appRootLabel}]: `);
+  const tokenAnswer = await ask("GitHub token (optional; stored as secret in Pulumi; empty = do not save): ");
 
   const finalRepoUrl = repoAnswer !== "" ? repoAnswer : savedRepoUrl;
   const finalBranch = branchAnswer || savedBranch;
   const finalAppRoot = (appRootAnswer === "." || appRootAnswer.toLowerCase() === "root") ? "" : (appRootAnswer || savedFrontendAppRoot);
 
-  console.log("\n--- Permisos de deploy (infra-permissions) ---");
+  console.log("\n--- Deploy permissions (infra-permissions) ---");
   if (cloudProvider !== "aws") {
-    console.log("(Solo AWS usa deployPrincipalArn; para Azure/GCP infra-permissions no está implementado aún.)");
+    console.log("(Only AWS uses deployPrincipalArn; for Azure/GCP infra-permissions is not implemented yet.)");
   } else {
-    console.log("¿Quién puede asumir el rol 'infra-deployer' para desplegar? (tu usuario IAM o un rol de CI)");
+    console.log("Who can assume the 'infra-deployer' role to deploy? (your IAM user or a CI role)");
   }
   const principalPrompt = savedDeployPrincipalArn
-    ? `ARN del principal (ej. arn:aws:iam::123456789012:user/mi-usuario) [${savedDeployPrincipalArn}]: `
-    : "ARN del principal (ej. arn:aws:iam::123456789012:user/mi-usuario) []: ";
+    ? `Principal ARN (e.g. arn:aws:iam::123456789012:user/my-user) [${savedDeployPrincipalArn}]: `
+    : "Principal ARN (e.g. arn:aws:iam::123456789012:user/my-user) []: ";
   const deployPrincipalAnswer = await ask(principalPrompt);
   const finalDeployPrincipalArn = deployPrincipalAnswer || savedDeployPrincipalArn;
   if (cloudProvider === "aws" && !finalDeployPrincipalArn) {
-    console.error("deployPrincipalArn es obligatorio para AWS. Ejemplo: arn:aws:iam::123456789012:user/tu-usuario");
+    console.error("deployPrincipalArn is required for AWS. Example: arn:aws:iam::123456789012:user/your-user");
     process.exit(2);
   }
 
@@ -126,15 +127,15 @@ async function main() {
     "utf8"
   );
   console.log(
-    `Se usará: org=${finalOrg}, app=${finalApp}, provider=${cloudProvider}, region=${cloudRegion}, repo=${finalRepoUrl || "(ninguno)"}, branch=${finalBranch}, appRoot=${finalAppRoot || "(raíz)"}, deployPrincipal=${finalDeployPrincipalArn}\n`
+    `Will use: org=${finalOrg}, app=${finalApp}, provider=${cloudProvider}, region=${cloudRegion}, repo=${finalRepoUrl || "(none)"}, branch=${finalBranch}, appRoot=${finalAppRoot || "(root)"}, deployPrincipal=${finalDeployPrincipalArn}\n`
   );
 
-  // Generar amplify.yml solo para AWS (Amplify); Azure Static Web Apps usa su propia config.
+  // Generate amplify.yml only for AWS (Amplify); Azure Static Web Apps uses its own config.
   if (cloudProvider === "aws") {
   const repoRoot = process.env.REPO_ROOT ? path.resolve(process.env.REPO_ROOT) : path.join(ROOT, "..");
   const amplifyYmlPath = path.join(repoRoot, "amplify.yml");
   const amplifyYmlContent = finalAppRoot
-    ? `# Generado por make setup (monorepo: appRoot=${finalAppRoot}). Edita si cambias la ruta.
+    ? `# Generated by make setup (monorepo: appRoot=${finalAppRoot}). Edit if you change the path.
 version: 1
 applications:
   - appRoot: ${finalAppRoot}
@@ -154,7 +155,7 @@ applications:
         paths:
           - node_modules/**/*
 `
-    : `# Generado por make setup (no monorepo: frontend en la raíz). Edita si cambias la estructura.
+    : `# Generated by make setup (no monorepo: frontend at root). Edit if you change the structure.
 version: 1
 frontend:
   phases:
@@ -174,9 +175,9 @@ frontend:
 `;
   try {
     fs.writeFileSync(amplifyYmlPath, amplifyYmlContent, "utf8");
-    console.log(`amplify.yml generado en ${amplifyYmlPath} (appRoot=${finalAppRoot || "raíz"}).\n`);
+    console.log(`amplify.yml written to ${amplifyYmlPath} (appRoot=${finalAppRoot || "root"}).\n`);
   } catch (e) {
-    console.warn(`No se pudo escribir amplify.yml en ${amplifyYmlPath}:`, e.message);
+    console.warn(`Could not write amplify.yml to ${amplifyYmlPath}:`, e.message);
   }
   }
 
@@ -186,6 +187,8 @@ frontend:
   run(`pulumi config set app ${finalApp}`, FRONTEND);
   run(`pulumi config set cloudProvider ${cloudProvider}`, FRONTEND);
   run(`pulumi config set cloudRegion ${cloudRegion}`, FRONTEND);
+  // Same region for AWS provider (code uses cloudRegion; provider uses aws:region).
+  if (cloudProvider === "aws") run(`pulumi config set aws:region ${cloudRegion}`, FRONTEND);
   run("pulumi config set domain example.com", FRONTEND);
   run("pulumi config set budgetLimit 150", FRONTEND);
   if (finalRepoUrl) run(`pulumi config set frontendRepoUrl ${finalRepoUrl}`, FRONTEND);
@@ -206,6 +209,7 @@ frontend:
   run(`pulumi config set app ${finalApp}`, BACKEND);
   run(`pulumi config set cloudProvider ${cloudProvider}`, BACKEND);
   run(`pulumi config set cloudRegion ${cloudRegion}`, BACKEND);
+  if (cloudProvider === "aws") run(`pulumi config set aws:region ${cloudRegion}`, BACKEND);
   run(`pulumi config set --secret database:password "${DB_PASSWORD}"`, BACKEND);
 
   // Infra-permissions
@@ -214,6 +218,7 @@ frontend:
   run(`pulumi config set app ${finalApp}`, INFRA_PERMS);
   run(`pulumi config set cloudProvider ${cloudProvider}`, INFRA_PERMS);
   run(`pulumi config set cloudRegion ${cloudRegion}`, INFRA_PERMS);
+  if (cloudProvider === "aws") run(`pulumi config set aws:region ${cloudRegion}`, INFRA_PERMS);
   if (cloudProvider === "aws" && finalDeployPrincipalArn) {
     run(`pulumi config set deployPrincipalArn "${finalDeployPrincipalArn.replace(/"/g, '\\"')}"`, INFRA_PERMS);
   }
@@ -229,9 +234,10 @@ frontend:
     run(`pulumi config set app ${finalApp}`, RUNTIME_PERMS);
     run(`pulumi config set cloudProvider ${cloudProvider}`, RUNTIME_PERMS);
     run(`pulumi config set cloudRegion ${cloudRegion}`, RUNTIME_PERMS);
+    if (cloudProvider === "aws") run(`pulumi config set aws:region ${cloudRegion}`, RUNTIME_PERMS);
   }
 
-  console.log(`Setup listo. Stack: ${stack}, provider: ${cloudProvider}, region: ${cloudRegion}. Siguiente: make deploy-permissions STACK=${stack}`);
+  console.log(`Setup done. Stack: ${stack}, provider: ${cloudProvider}, region: ${cloudRegion}. Next: make deploy-permissions STACK=${stack}`);
 }
 
 main().catch((err) => {

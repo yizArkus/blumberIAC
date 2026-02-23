@@ -8,7 +8,7 @@ export type ResourceContext = Record<string, unknown>;
 /**
  * Crea todos los recursos definidos en descriptors en orden.
  * Las salidas de cada recurso se guardan en el context con la clave descriptor.key ?? descriptor.name,
- * para que otros recursos puedan referenciarlas con { ref: "key.outputProperty" }.
+ * so other resources can reference them with { ref: "key.outputProperty" }.
  */
 export function createResources(
   provider: "aws" | "azure" | "gcp",

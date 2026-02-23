@@ -1,4 +1,6 @@
+# aws:region must match cloudRegion so the AWS provider uses the correct region.
 config:
+  aws:region: us-west-2
   frontend-infra:budgetLimit: "150"
   frontend-infra:cloudProvider: aws
   frontend-infra:cloudRegion: us-west-2
@@ -10,5 +12,5 @@ config:
   frontend-infra:frontendAppRoot: front-end
   frontend-infra:org: an
   frontend-infra:app: blumberg
-  frontend-infra:enableDns: false
-  frontend-infra:enableWaf: true
+  frontend-infra:enableDns: "false"
+  frontend-infra:enableWaf: "true"

@@ -11,11 +11,14 @@ config:
   database:skipFinalSnapshot: "true"
   backend-infra:budgetLimit: "150"
   backend-infra:cloudProvider: aws
-  backend-infra:cloudRegion: us-east-1
+  backend-infra:cloudRegion: us-west-2
   backend-infra:containerImage: nginx:alpine
   backend-infra:dbSize: db.t4g.micro
   backend-infra:instanceSize: t3.micro
   backend-infra:maxCapacity: "1"
   backend-infra:minCapacity: "1"
   database:password:
-    secure: AAABAFFLEUyVVzBWLuYt9gg1aBwYNPFoqkO4Qj2xjvosagOrMTU8Xw==
+    secure: AAABAAOTbKUeShqWKxOSN0L9yNbahl6PHUULFRIODe8hZkslbLLetw==
+  backend-infra:org: an
+  backend-infra:app: blumberg
+  aws:region: us-west-2

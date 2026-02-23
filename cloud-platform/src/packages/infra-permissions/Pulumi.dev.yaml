@@ -2,5 +2,8 @@
 # deployPrincipalArn: usuario o rol que podrá hacer sts:AssumeRole de infra-deployer-role.
 config:
   infra-permissions:cloudProvider: aws
-  infra-permissions:cloudRegion: us-east-1
-  infra-permissions:deployPrincipalArn: arn:aws:iam::201462387644:user/nr-yd-user-deploy
+  infra-permissions:cloudRegion: us-west-2
+  infra-permissions:deployPrincipalArn: nr-yd-user-deploy
+  infra-permissions:org: an
+  infra-permissions:app: blumberg
+  aws:region: us-west-2

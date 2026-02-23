@@ -4,3 +4,4 @@ config:
   infra-permissions:deployPrincipalArn: nr-yd-user-deploy
   infra-permissions:org: an
   infra-permissions:app: blumberg
+  aws:region: us-west-2

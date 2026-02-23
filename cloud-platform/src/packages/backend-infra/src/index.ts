@@ -8,7 +8,7 @@ const config = new pulumi.Config();
 function requireNumber(key: string): number {
   const v = config.getNumber(key);
   if (v === undefined) {
-    throw new Error(`Config requerida faltante: "${key}". Declárala en Pulumi.<stack>.yaml o: pulumi config set ${key} <valor>`);
+    throw new Error(`Missing required config: "${key}". Declare it in Pulumi.<stack>.yaml or: pulumi config set ${key} <value>`);
   }
   return v;
 }

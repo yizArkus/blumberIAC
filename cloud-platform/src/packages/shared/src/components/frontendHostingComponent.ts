@@ -1,7 +1,7 @@
 /**
  * Frontend hosting component - provider-agnostic interface.
  * Equivalents:
- * - AWS: Amplify (hosting + CDN + CI/CD desde repo, auth opcional)
+ * - AWS: Amplify (hosting + CDN + CI/CD from repo, auth optional)
  * - Azure: Static Web Apps (hosting + CDN + CI/CD, Azure Functions, auth)
  * - GCP: Firebase Hosting (hosting + CDN + CI/CD, Cloud Functions, Firebase Auth)
  */
@@ -14,23 +14,25 @@ export interface FrontendHostingComponentArgs {
   provider: CloudProvider;
   region: string;
   tags?: Record<string, string>;
-  /** Repo Git para CI/CD (GitHub, etc.). Opcional: despliegue manual. */
+  /** Git repo for CI/CD (GitHub, etc.). Optional: manual deploy. */
   repoUrl?: string;
-  /** Rama por defecto (ej. "main"). */
+  /** Default branch (e.g. "main"). */
   branch?: string;
-  /** Framework para hints de build (React, Vue, Angular). */
+  /** Framework for build hints (React, Vue, Angular). */
   framework?: string;
-  /** Token de acceso (GitHub PAT, etc.); requerido si repoUrl está definido (Amplify lo exige). */
+  /** Access token (GitHub PAT, etc.); required if repoUrl is set (Amplify requires it). */
   accessToken?: string | Output<string>;
-  /** Ruta al frontend dentro del repo (monorepo). Ej: "front-end" para que npm ci/build se ejecuten ahí. */
+  /** Path to frontend inside repo (monorepo). E.g. "front-end" so npm ci/build run there. */
   appRoot?: string;
 }
 
 export interface FrontendHostingComponentOutputs {
-  /** URL pública del frontend (Amplify / Static Web Apps / Firebase). */
+  /** Public frontend URL (Amplify / Static Web Apps / Firebase). */
   appUrl: Output<string>;
-  /** Id de la app en el proveedor (para refs o consola). */
+  /** App id in the provider (for refs or console). */
   appId: Output<string>;
+  /** App ARN (e.g. for associating WAF in Amplify: AssociateWebACL). */
+  appArn?: Output<string>;
 }
 
 export interface IFrontendHostingComponentAdapter {

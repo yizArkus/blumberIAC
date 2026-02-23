@@ -20,7 +20,7 @@ export interface DatabaseComponentArgs {
   engineVersion?: string;
   /** Usuario de la DB. Default admin */
   username?: string;
-  /** Contraseña (usa Pulumi secret). Recomendado: pulumi config set --secret database:password "..." */
+  /** Password (use Pulumi secret). Recommended: pulumi config set --secret database:password "..." */
   password?: import("@pulumi/pulumi").Input<string>;
   /** Tipo de almacenamiento (AWS: gp3, gp2). Default gp3 */
   storageType?: string;

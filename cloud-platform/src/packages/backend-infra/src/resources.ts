@@ -1,6 +1,6 @@
 /**
- * Definición declarativa de recursos del backend.
- * El orden importa: los recursos pueden referenciar salidas de los anteriores con { ref: "key.prop" }.
+ * Declarative backend resource definitions.
+ * Order matters: resources can reference outputs of previous ones with { ref: "key.prop" }.
  */
 import type { Output } from "@pulumi/pulumi";
 import { nameTag } from "@cloud-platform/shared";
@@ -11,12 +11,12 @@ export interface BackendResourcesConfig {
   minCapacity: number;
   maxCapacity: number;
   containerImage: string;
-  /** Opciones de base de datos (todas obligatorias en Pulumi config database:*) */
+  /** Database options (all required in Pulumi config database:*) */
   database: {
     engine: string;
     engineVersion: string;
     username: string;
-    /** Contraseña (config.requireSecret("database:password")) */
+    /** Password (config.requireSecret("database:password")) */
     password: string | Output<string>;
     storageGb: number;
     storageType: string;
