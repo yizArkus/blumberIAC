@@ -12,3 +12,6 @@ Pulumi.*.yaml
 .pulumi/
 .pulumi-selected-stack
 .pulumi-setup.json
+state.json
+**/state.json
+docs/
